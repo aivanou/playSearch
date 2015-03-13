@@ -1,0 +1,79 @@
+{
+    "settings":{
+                "analysis":{
+                   "analyzer": {
+                       "default" : {
+                           "type" : "thai"
+                    },
+                       "index_analyzer": {
+                           "tokenizer": "standard",
+                           "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
+                       },
+                       "search_analyzer": {
+                           "tokenizer": "standard",
+                           "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
+                       }
+                   }
+                }
+    },
+    "mappings":{
+        "address":{
+            "properties":{
+                "indexed":{
+                    "type":"date"
+                },
+                "lon":{
+                   "type":"double"
+                },
+                "addr_city":{
+                   "type":"string"
+                },
+                "addr_street":{
+                   "type":"string"
+                },
+                "fax":{
+                   "type":"string"
+                },
+                "website":{
+                   "type":"string"
+                },
+                "E-mail":{
+                   "type":"string"
+                },
+                "tel":{
+                   "type":"string"
+                },
+                "addr_postcode":{
+                   "type":"string"
+                },
+                "addr_province":{
+                   "type":"string"
+                },
+                "country_code":{
+                   "type":"string"
+                },
+                "addr_other":{
+                   "type":"string"
+                },
+                "addr_country":{
+                   "type":"string"
+                },
+                "description":{
+                   "type":"string"
+                },
+                "name":{
+                   "type":"string"
+                },
+                "addr_name":{
+                   "type":"string"
+                },
+                "addr_district":{
+                   "type":"string"
+                },
+                "lat":{
+                   "type":"double"
+                }
+            }
+        }
+    }
+}

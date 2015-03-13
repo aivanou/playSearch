@@ -1,0 +1,46 @@
+{
+    "settings":{
+                "analysis":{
+                   "analyzer": {
+                       "default" : {
+                           "type" : "thai"
+                    },
+                       "index_analyzer": {
+                           "tokenizer": "standard",
+                           "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
+                       },
+                       "search_analyzer": {
+                           "tokenizer": "standard",
+                           "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
+                       }
+                   }
+                }
+    },
+    "mappings":{
+        "picture" :{
+            "properties":{
+                "title":{
+                   "type":"string"
+                },
+                "url":{
+                    "type":"string"
+                },
+                "indexed":{
+                    "type":"date"
+                },
+                "height":{
+                    "type":"integer"
+                },
+                "width":{
+                    "type":"integer"
+                },
+                "preview_url":{
+                    "type":"string"
+                },
+                "format":{
+                    "type":"string"
+                }
+            }
+        }
+    }
+}

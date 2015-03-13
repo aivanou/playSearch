@@ -1,0 +1,17 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+POST    /search                     controllers.Application.search()
+
+GET     /version                    controllers.VersionController.getVersion()
+
+#ok-catalog
+
+POST 	/catalog                    controllers.CatalogController.insertCatalogue()
+GET	    /catalog/:url 	       	    controllers.CatalogController.getCatalogue(url:String)
+DELETE  /catalog/:url  	       	    controllers.CatalogController.deleteCatalogue(url:String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

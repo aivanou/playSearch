@@ -1,0 +1,13 @@
+{
+    "query":"",
+    "lang":"",
+    "providers":[],
+    "index":"",
+    "offset":"",
+    "resultsOnPage":"",
+    "indexes":[]
+}
+
+{"query":"hello","lang":"th","provider":"GOOGLE","index":"","offset":"","resultsOnPage":""}
+
+curl -XPOST 'http://localhost:9000/search' -H "Content-type: application/json" -d '{"query":"hello","lang":"th","provider":"GOOGLE","index":"","offset":"","resultsOnPage":""}'
