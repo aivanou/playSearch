@@ -4,7 +4,7 @@
  */
 package services.parsers;
 
-import model.ResponseItem;
+import model.response.ResponseItem;
 import model.SearchEngineType;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
@@ -24,16 +24,16 @@ public class ParserSEBing extends ParserSE {
     @Override
     protected ResponseItem parseElement(Element el) throws MalformedURLException {
         Element mc_el = el.getElementsByClass("sa_mc").first();
-        if (mc_el != null) {
-            String title = mc_el.getElementsByClass("sb_tlst").get(0).getElementsByTag("h3").get(0).getElementsByAttribute("href").get(0).text();
-            String snippet = mc_el.getElementsByTag("p").text();
-            String url = mc_el.getElementsByClass("sb_meta").get(0).getElementsByTag("cite").text();
-            ResponseItem item = new ResponseItem();
-            item.setUrl(url);
-            item.setTitle(title);
-            item.setSnippet(snippet);
-            return item;
-        }
+//        if (mc_el != null) {
+//            String title = mc_el.getElementsByClass("sb_tlst").get(0).getElementsByTag("h3").get(0).getElementsByAttribute("href").get(0).text();
+//            String snippet = mc_el.getElementsByTag("p").text();
+//            String url = mc_el.getElementsByClass("sb_meta").get(0).getElementsByTag("cite").text();
+//            ResponseItem item = new ResponseItem();
+//            item.setUrl(url);
+//            item.setTitle(title);
+//            item.setSnippet(snippet);
+//            return item;
+//        }
         return null;
     }
 

@@ -2,10 +2,10 @@ package services.search.provider.impl;
 
 import com.akavita.metasearch.keystorage.domain.GoogleKey;
 import com.akavita.metasearch.keystorage.service.KeyProvider;
-import model.ResponseItem;
-import model.SearchRequest;
-import model.SearchResponse;
+import model.response.ResponseItem;
 import model.SearchType;
+import model.request.ContentRequest;
+import model.response.ContentResponse;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
 import play.libs.F;
@@ -43,12 +43,10 @@ public final class GoogleApiSearchProvider extends ApiSearchProvider implements 
     }
 
     @Override
-    public F.Promise<SearchResponse> doSearch(final SearchType type, final SearchRequest req) throws IllegalArgumentException {
+    public F.Promise<ContentResponse> doSearch(final ContentRequest req) throws IllegalArgumentException {
         Logger.debug(String.format("Google API accepted: %s", req));
-        if (type != SearchType.DOCS) {
-            throw new IllegalArgumentException(String.format("Google API can't be used for searching through '%s'; documents only", type));
-        }
-        String url = urlBuilder.build(req);
+//        String url = urlBuilder.build(req);
+        String url = null;
         Logger.debug(String.format("Google API: build url %s", url));
         WS.WSRequestHolder holder = WS.url(url).setTimeout(TIMEOUT);
         Map<String, String> qParams = urlBuilder.getQueryParams(url);
@@ -58,38 +56,44 @@ public final class GoogleApiSearchProvider extends ApiSearchProvider implements 
         final GoogleKey key = provider.getValidKey();
         if (key == null) {
             Logger.warn("Has no key for Google API");
-            return F.Promise.pure(new SearchResponse(type));
+//            return F.Promise.pure(new SearchResponse(type));
+            return null;
         }
         Logger.debug("Using key cx: " + key.getValue().getCx());
         Logger.debug("Using key : " + key.getValue().getKey());
         holder.setQueryParameter(GoogleURLBuilder.CX, key.getValue().getCx());
         holder.setQueryParameter(GoogleURLBuilder.KEY, key.getValue().getKey());
-        return holder.get().map(new F.Function<WS.Response, SearchResponse>() {
-            @Override
-            public SearchResponse apply(WS.Response response) throws Throwable {
-                int code = response.getStatus();
-                Logger.debug("Code " + code);
-                switch (code) {
-                    case HTTP_UNAUTHORIZED: {
-                        Logger.warn(String.format("Key %s is not valid for Google API, code %s", key.getValue().getKey(), code));
-                        return new SearchResponse(type);
-                    }
-                    case HTTP_SUCCESS: {
-                        return convert(response, type);
-                    }
-                    default: {
-                        Logger.warn(String.format("Key %s is not valid for Google API, code %s", key.getValue().getKey(), code));
-                        return new SearchResponse(type);
-                    }
-                }
-            }
-        }).recover(new F.Function<Throwable, SearchResponse>() {
-            @Override
-            public SearchResponse apply(Throwable throwable) throws Throwable {
-                Logger.error(String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()));
-                return new SearchResponse(type);
-            }
-        });
+//        return holder.get().map(new F.Function<WS.Response, SearchResponse>() {
+//            @Override
+//            public SearchResponse apply(WS.Response response) throws Throwable {
+//                int code = response.getStatus();
+//                Logger.debug("Code " + code);
+//                switch (code) {
+//                    case HTTP_UNAUTHORIZED: {
+//                        Logger.warn(String.format("Key %s is not valid for Google API, code %s", key.getValue().getKey(), code));
+////                        return new SearchResponse(type);
+//                        return null;
+//                    }
+//                    case HTTP_SUCCESS: {
+////                        return convert(response, type);
+//                        return null;
+//                    }
+//                    default: {
+//                        Logger.warn(String.format("Key %s is not valid for Google API, code %s", key.getValue().getKey(), code));
+////                        return new SearchResponse(type);
+//                        return null;
+//                    }
+//                }
+//            }
+//        }).recover(new F.Function<Throwable, SearchResponse>() {
+//            @Override
+//            public SearchResponse apply(Throwable throwable) throws Throwable {
+//                Logger.error(String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()));
+////                return new SearchResponse(type);
+//                return null;
+//            }
+//        });
+        return null;
     }
 
     @Override
@@ -112,7 +116,8 @@ public final class GoogleApiSearchProvider extends ApiSearchProvider implements 
                     String title = next.get(TITLE).asText();
                     String snippet = next.get(SNIPPET).asText();
                     String url = next.get(LINK).asText();
-                    ResponseItem item = new ResponseItem(url, title, snippet, type, score);
+//                    ResponseItem item = new ResponseItem(url, title, snippet, type, score);
+                    ResponseItem item = null;
                     items.add(item);
                     Logger.trace(String.format("Another item parsed: %s", item));
                     score /= 2d;

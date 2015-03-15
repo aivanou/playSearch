@@ -1,7 +1,7 @@
 package services.search.after;
 
 
-import model.SearchResponse;
+import model.response.ContentResponse;
 
 /**
  * executes process method after each search;
@@ -9,6 +9,6 @@ import model.SearchResponse;
  */
 public interface AfterSearch {
 
-    SearchResponse process(SearchResponse response);
+    ContentResponse process(ContentResponse response);
 
 }

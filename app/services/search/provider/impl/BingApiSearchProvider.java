@@ -2,10 +2,10 @@ package services.search.provider.impl;
 
 import com.akavita.metasearch.keystorage.domain.StringKey;
 import com.akavita.metasearch.keystorage.service.KeyProvider;
-import model.ResponseItem;
-import model.SearchRequest;
-import model.SearchResponse;
+import model.response.ResponseItem;
 import model.SearchType;
+import model.request.ContentRequest;
+import model.response.ContentResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
@@ -40,52 +40,60 @@ public final class BingApiSearchProvider extends ApiSearchProvider {
     }
 
     @Override
-    public F.Promise<SearchResponse> doSearch(final SearchType type, final SearchRequest req) throws IllegalArgumentException {
+    public F.Promise<ContentResponse> doSearch(final ContentRequest req) throws IllegalArgumentException {
         Logger.debug(String.format("Bing API accepted: %s", req));
-        if (type != SearchType.DOCS) {
-            throw new IllegalArgumentException(String.format("Bing API can't be used for searching through '%s'; documents only", type));
+        if (req.getSearchType() != SearchType.DOCS) {
+            throw new IllegalArgumentException(String.format("Bing API can't be used for searching through '%s'; documents only", req.getSearchType()));
         }
         StringKey sKey = provider.getValidKey();
         if (sKey == null) {
             Logger.warn("Has no key for Bing API");
-            return F.Promise.pure(new SearchResponse());
+//            return F.Promise.pure(new SearchResponse());
+            return null;
         }
         final String key = sKey.getValue().getKey();
         final String encrKey = String.format("Basic %s", correct(key));
-        final String url = urlBuilder.build(req);
+//        final String url = urlBuilder.build(req);
+        final String url = null;
         Logger.debug(String.format("Bing API goes to url: %s", url));
+
 
         WS.WSRequestHolder holder = WS.url(url).setTimeout(TIMEOUT).setHeader("Authorization", encrKey);
         Map<String, String> qParams = urlBuilder.getQueryParams(url);
         for (Map.Entry<String, String> q : qParams.entrySet()) {
             holder.setQueryParameter(q.getKey(), q.getValue());
         }
-        return holder.get().map(new F.Function<WS.Response, SearchResponse>() {
-            @Override
-            public SearchResponse apply(WS.Response response) throws Throwable {
-                int code = response.getStatus();
-                Logger.debug("Code " + code);
-                switch (code) {
-                    case HTTP_UNAUTHORIZED: {
-                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
-                        return new SearchResponse();
-                    }
-                    case HTTP_SUCCESS: {
-                        return convert(response, type);
-                    }
-                    default: {
-                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
-                        return new SearchResponse();
-                    }
-                }
-            }
-        }).recover(new F.Function<Throwable, SearchResponse>() {
-            @Override
-            public SearchResponse apply(Throwable throwable) throws Throwable {
-                Logger.error(String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()));
-                return new SearchResponse(type);
-            }
-        });
+//        return holder.get().map(new F.Function<WS.Response, SearchResponse>() {
+//            @Override
+//            public SearchResponse apply(WS.Response response) throws Throwable {
+//                int code = response.getStatus();
+//                Logger.debug("Code " + code);
+//                switch (code) {
+//                    case HTTP_UNAUTHORIZED: {
+//                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
+////                        return new SearchResponse();
+//                        return null;
+//                    }
+//                    case HTTP_SUCCESS: {
+//                        return convert(response, type);
+//                    }
+//                    default: {
+//                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
+////                        return new SearchResponse();
+//                        return null;
+//                    }
+//                }
+//            }
+//        }).recover(new F.Function<Throwable, SearchResponse>() {
+//            @Override
+//            public SearchResponse apply(Throwable throwable) throws Throwable {
+//                Logger.error(String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()));
+////                return new SearchResponse(type);
+//                return null;
+//            }
+//        });
+
+        return null;
     }
 
     /**
@@ -121,7 +129,7 @@ public final class BingApiSearchProvider extends ApiSearchProvider {
                         String title = next.get(TITLE).asText();
                         String snippet = next.get(DESCRIPTION).asText();
                         String url = next.get(URL).asText();
-                        ResponseItem item = new ResponseItem(url, title, snippet, type, score);
+                        ResponseItem item = new ResponseItem(url, title, snippet, type, score, System.nanoTime());
                         items.add(item);
                         Logger.trace(String.format("Another item parsed: %s", item));
                         score /= 2d;

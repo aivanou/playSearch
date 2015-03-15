@@ -1,18 +1,17 @@
 package services.search.provider.impl;
 
 import com.ning.http.client.Realm;
-import model.*;
-import org.codehaus.jackson.JsonNode;
-import play.Logger;
+import model.SearchEngineType;
+import model.SearchType;
+import model.request.ContentRequest;
+import model.request.SearchRequest;
+import model.response.ContentResponse;
+import model.response.SearchResponse;
 import play.Play;
 import play.libs.F;
 import play.libs.WS;
-import services.search.provider.ProviderFactory;
 import services.search.provider.SearchProvider;
 import services.search.provider.impl.supervisor.ProxySupervisor;
-
-import java.util.Iterator;
-import java.util.concurrent.TimeoutException;
 
 /**
  * This Provider getting data from Google or Bing via proxy API provided by seo.promo.co.th.
@@ -37,58 +36,60 @@ public class ProxyAPIProvider implements SearchProvider {
     }
 
     @Override
-    public F.Promise<SearchResponse> doSearch(final SearchType type, final SearchRequest req) {
-        final long startTime = System.currentTimeMillis();
-        if (supervisor == null || (supervisor != null && supervisor.isProxyAvailable())) {
-            return get(req.getQuery(), req.getPage()).map(
-                    new F.Function<WS.Response, SearchResponse>() {
-                        public SearchResponse apply(WS.Response response) throws Exception {
-                            if (Logger.isDebugEnabled()) {
-                                Logger.debug("ProxyProvider: processing response, query [" + req.getQuery() + "]");
-                            }
-
-                            SearchResponse searchResponse = new SearchResponse(type);
-                            searchResponse.setSearchType(type);
-
-                            try {
-                                Iterator<JsonNode> it = response.asJson().get("links").iterator();
-                                while (it.hasNext()) {
-                                    ResponseItem responseItem = new ResponseItem();
-                                    JsonNode item = it.next();
-                                    responseItem.setUrl(item.get("url").asText());
-                                    responseItem.setSnippet(item.get("description").asText());
-                                    responseItem.setTitle(item.get("title").asText());
-                                    searchResponse.addItem(responseItem);
-                                }
-                            } catch (Exception ex) {
-                                Logger.error("ProxyProvider: Error during parsing search result for query [" + req.getQuery() + "]");
-                                throw ex;
-                            }
-
-                            if (Logger.isDebugEnabled()) {
-                                Logger.debug("ProxyProvider: query[" + req.getQuery() + "] time: " + (System.currentTimeMillis() - startTime));
-                            }
-                            return searchResponse;
-                        }
-                    }
-            ).recover(new F.Function<Throwable, SearchResponse>() {
-                @Override
-                public SearchResponse apply(Throwable throwable) throws Throwable {
-                    if (throwable instanceof TimeoutException) {
-                        String msg = String.format("Timeout on %s proxy API exceeded", engineType);
-                        Logger.debug(msg);
-                        if (supervisor != null) {
-                            supervisor.fail(msg);
-                        }
-                    }
-                    Logger.error("Failed to get proxy API result because of: " + throwable.getLocalizedMessage());
-                    return new SearchResponse(type);
-                }
-            });
-        } else {
-            Logger.debug(String.format("Proxy API %s is unavailable, using key API instead", engineType));
-            return ProviderFactory.getKeyProvider(engineType).doSearch(type, req);
-        }
+    public F.Promise<ContentResponse> doSearch(final ContentRequest req) {
+//        final long startTime = System.currentTimeMillis();
+//        if (supervisor == null || (supervisor != null && supervisor.isProxyAvailable())) {
+//            return get(req.getQuery(), req.getPage()).map(
+//                    new F.Function<WS.Response, SearchResponse>() {
+//                        public SearchResponse apply(WS.Response response) throws Exception {
+//                            if (Logger.isDebugEnabled()) {
+//                                Logger.debug("ProxyProvider: processing response, query [" + req.getQuery() + "]");
+//                            }
+//
+//                            SearchResponse searchResponse = null;
+////                            searchResponse.setSearchType(type);
+//
+//                            try {
+//                                Iterator<JsonNode> it = response.asJson().get("links").iterator();
+//                                while (it.hasNext()) {
+//                                    ResponseItem responseItem = new ResponseItem();
+//                                    JsonNode item = it.next();
+//                                    responseItem.setUrl(item.get("url").asText());
+//                                    responseItem.setSnippet(item.get("description").asText());
+//                                    responseItem.setTitle(item.get("title").asText());
+////                                    searchResponse.addItem(responseItem);
+//                                }
+//                            } catch (Exception ex) {
+//                                Logger.error("ProxyProvider: Error during parsing search result for query [" + req.getQuery() + "]");
+//                                throw ex;
+//                            }
+//
+//                            if (Logger.isDebugEnabled()) {
+//                                Logger.debug("ProxyProvider: query[" + req.getQuery() + "] time: " + (System.currentTimeMillis() - startTime));
+//                            }
+//                            return searchResponse;
+//                        }
+//                    }
+//            ).recover(new F.Function<Throwable, SearchResponse>() {
+//                @Override
+//                public SearchResponse apply(Throwable throwable) throws Throwable {
+//                    if (throwable instanceof TimeoutException) {
+//                        String msg = String.format("Timeout on %s proxy API exceeded", engineType);
+//                        Logger.debug(msg);
+//                        if (supervisor != null) {
+//                            supervisor.fail(msg);
+//                        }
+//                    }
+//                    Logger.error("Failed to get proxy API result because of: " + throwable.getLocalizedMessage());
+////                    return new SearchResponse(type);
+//                return null;
+//                }
+//            });
+//        } else {
+//            Logger.debug(String.format("Proxy API %s is unavailable, using key API instead", engineType));
+//            return ProviderFactory.getKeyProvider(engineType).doSearch(type, req);
+//        }
+        return null;
     }
 
     public F.Promise<WS.Response> get(String query, int page) {

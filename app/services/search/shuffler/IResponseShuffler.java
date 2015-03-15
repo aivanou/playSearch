@@ -1,7 +1,7 @@
 package services.search.shuffler;
 
-import model.ResponseItem;
-import model.SearchResponse;
+import model.response.ResponseItem;
+import model.response.SearchResponse;
 
 import java.util.Collection;
 

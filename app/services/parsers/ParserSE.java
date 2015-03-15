@@ -1,6 +1,6 @@
 package services.parsers;
 
-import model.ResponseItem;
+import model.response.ResponseItem;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

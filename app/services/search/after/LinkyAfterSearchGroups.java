@@ -1,13 +1,11 @@
 package services.search.after;
 
-import model.ResponseItem;
-import model.SearchResponse;
-import model.SearchType;
+import model.response.ResponseItem;
+import model.response.ContentResponse;
 import play.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,26 +20,26 @@ public class LinkyAfterSearchGroups implements AfterSearch {
      * maybe it should be threadSafe?
      */
     @Override
-    public SearchResponse process(SearchResponse searchResponse) {
+    public ContentResponse process(ContentResponse searchResponse) {
         if (searchResponse == null) return null;
-        if (searchResponse.getItems().isEmpty() || !SearchType.DOCS.equals(searchResponse.getSearchType())) {
-            return searchResponse;
-        }
-        List<ResponseItem> rItems = new ArrayList<>(searchResponse.getItems().size());
-        for (ResponseItem item : searchResponse.getItems()) {
-            String domain;
-            try {
-                domain = item.getParams().containsKey("domain") ? item.getParams().get("domain") : getHost(item.getUrl());
-            } catch (MalformedURLException e) {
-                Logger.error("LinkyAfterSearchGroups: Cannot get domain from url:   " + item.getUrl());
-                continue;
-            }
-            if (!containsDomain(rItems, domain)) {
-                rItems.add(item);
-            }
-        }
-        searchResponse.getItems().clear();
-        searchResponse.getItems().addAll(rItems);
+//        if (searchResponse.getItems().isEmpty() || !SearchType.DOCS.equals(searchResponse.getSearchType())) {
+//            return searchResponse;
+//        }
+//        List<ResponseItem> rItems = new ArrayList<>(searchResponse.getItems().size());
+//        for (ResponseItem item : searchResponse.getItems()) {
+//            String domain;
+//            try {
+//                domain = item.getParams().containsKey("domain") ? item.getParams().get("domain") : getHost(item.getUrl());
+//            } catch (MalformedURLException e) {
+//                Logger.error("LinkyAfterSearchGroups: Cannot get domain from url:   " + item.getUrl());
+//                continue;
+//            }
+//            if (!containsDomain(rItems, domain)) {
+//                rItems.add(item);
+//            }
+//        }
+//        searchResponse.getItems().clear();
+//        searchResponse.getItems().addAll(rItems);
         return searchResponse;
     }
 

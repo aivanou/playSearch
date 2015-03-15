@@ -1,6 +1,6 @@
 package services.search.provider.impl.apiutil;
 
-import model.SearchRequest;
+import model.request.SearchRequest;
 
 /**
  * GoogleURLBuilder ...
@@ -35,8 +35,8 @@ public class GoogleURLBuilder extends URLBuilder {
     @Override
     public String build(SearchRequest req) throws IllegalArgumentException {
         validate(req);
-        int start = start(req.getPage(), req.getNumber());
-        int size = size(req.getNumber());
+        int start = start(0, req.getTotalNumber());
+        int size = size(req.getTotalNumber());
         StringBuilder sb = new StringBuilder();
         sb.append(addr).append(START).append(start).append(SIZE).append(size).append(LANG).append(req.getLang())
                 .append(REGION).append(req.getRegion()).append(QUERY)

@@ -6,6 +6,10 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import javax.annotation.Generated;
 import java.util.Collection;
 
+/**
+ * The input json is translated into this Data Transfer Object,
+ * than used by @see model.input.SearchRequest
+ */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 public class InputDTO {
@@ -18,8 +22,6 @@ public class InputDTO {
     private String region;
     @JsonProperty("totalNumber")
     private int totalNumber;
-    @JsonProperty("page")
-    private Integer page;
     @JsonProperty("engines")
     private Collection<String> searchEngines;
     @JsonProperty("contents")
@@ -57,14 +59,6 @@ public class InputDTO {
         this.totalNumber = totalNumber;
     }
 
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
     public Collection<String> getSearchEngines() {
         return searchEngines;
     }
@@ -88,7 +82,6 @@ public class InputDTO {
                 ", lang='" + lang + '\'' +
                 ", region='" + region + '\'' +
                 ", totalNumber=" + totalNumber +
-                ", page=" + page +
                 ", engines= " + searchEngines +
                 ", contents:" + contents +
                 '}';

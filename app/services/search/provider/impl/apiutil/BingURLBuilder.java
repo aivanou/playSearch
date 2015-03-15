@@ -1,6 +1,6 @@
 package services.search.provider.impl.apiutil;
 
-import model.SearchRequest;
+import model.request.SearchRequest;
 
 /**
  * BingURLBuilder produce method to build URL for Bing API
@@ -32,8 +32,8 @@ public class BingURLBuilder extends URLBuilder {
     public String build(SearchRequest req) throws IllegalArgumentException {
         validate(req);
         String market = market(req.getLang(), req.getRegion());
-        int top = top(req.getNumber());
-        int skip = skip(req.getPage(), req.getNumber());
+        int top = top(req.getTotalNumber());
+        int skip = skip(0, req.getTotalNumber());
         StringBuilder sb = new StringBuilder();
         sb.append(addr).append(MARKET_ARG).append(market).append(TOP_ARG).append(top).append(SKIP_ARG)
                 .append(skip).append(QUERY_ARG).append('\'').append(req.getQuery()).append('\'');

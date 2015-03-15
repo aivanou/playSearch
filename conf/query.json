@@ -1,0 +1,54 @@
+{
+  "elastic": {
+    "commands": {
+      "search": {
+        "query": {
+          "multi_match": {
+            "query": "%s",
+            "fields": []
+          }
+        },
+        "from": "%i",
+        "size": "%i"
+      },
+      "insert": {
+        "content": "%s",
+        "title": "%s",
+        "url": "%s",
+        "indexed": ""
+      }
+    }
+  },
+  "content": {
+    "document": {
+      "searchFields": [
+        "title",
+        "content"
+      ]
+    },
+    "news": {
+      "searchFields": [
+        "title",
+        "content",
+        "time"
+      ]
+    },
+    "default": {
+      "searchFields": [
+        "title",
+        "content"
+      ]
+    }
+  }
+}
+
+
+/*
+VIDEO("video"),
+NEWS("news"),
+DOCS("document"),
+PICTURE("picture"),
+CATALOG("category"),
+ADDRESS("address"),
+UNDEFINED("undefined");
+*/

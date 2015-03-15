@@ -1,6 +1,6 @@
 package services.search.provider.impl.apiutil;
 
-import model.SearchRequest;
+import model.request.SearchRequest;
 import play.Logger;
 
 import java.net.MalformedURLException;

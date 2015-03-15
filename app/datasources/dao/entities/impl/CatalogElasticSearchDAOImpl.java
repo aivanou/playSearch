@@ -8,7 +8,6 @@ import org.codehaus.jackson.JsonNode;
  */
 public class CatalogElasticSearchDAOImpl extends ElasticEntityOperationsDAO<Catalog> {
 
-
     @Override
     protected Catalog convertFromJson(JsonNode json) {
         String title = getElement(json, "title");

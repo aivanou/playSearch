@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * The search engine types,
+ * Linky is the company developed engine,
+ * Google and Bing are called through the proxies
+ */
 public enum SearchEngineType {
     GOOGLE("google"),
     BING("bing"),

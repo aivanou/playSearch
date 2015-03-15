@@ -1,8 +1,8 @@
 package services.entities;
 
 
-import model.EntityResponse;
 import play.libs.F;
+import services.entities.Impl.EntityResponse;
 
 /**
  * operations on entities(entities,video,news, etc..)

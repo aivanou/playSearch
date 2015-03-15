@@ -1,79 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:task="http://www.springframework.org/schema/task"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
-                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="propertiesPlaceholder" class="com.akavita.metasearch.keystorage.spring.play.PlayPropertyPlaceholderConfigurer">
-        <property searchType="location">
-            <bean class="org.springframework.core.io.ClassPathResource">
-                <constructor-arg searchType="path" value="application.conf"/>
-            </bean>
-        </property>
-    </bean>
+    <!--<bean id="propertiesPlaceholder"-->
+    <!--class="com.akavita.metasearch.keystorage.spring.play.PlayPropertyPlaceholderConfigurer">-->
+    <!--<property searchType="location">-->
+    <!--<bean class="org.springframework.core.io.ClassPathResource">-->
+    <!--<constructor-arg searchType="path" value="application.conf"/>-->
+    <!--</bean>-->
+    <!--</property>-->
+    <!--</bean>-->
 
-    <bean id="accessKeyDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property searchType="driverClassName" value="${key.storage.driverClassName}"/>
-        <property searchType="url" value="${key.storage.url}"/>
-        <property searchType="username" value="${key.storage.username}"/>
-        <property searchType="password" value="${key.storage.password}"/>
-        <property searchType="defaultAutoCommit" value="false"/>
-    </bean>
+    <!--<bean id="accessKeyDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">-->
+    <!--<property searchType="driverClassName" value="${key.storage.driverClassName}"/>-->
+    <!--<property searchType="url" value="${key.storage.url}"/>-->
+    <!--<property searchType="username" value="${key.storage.username}"/>-->
+    <!--<property searchType="password" value="${key.storage.password}"/>-->
+    <!--<property searchType="defaultAutoCommit" value="false"/>-->
+    <!--</bean>-->
 
-    <tx:annotation-driven transaction-manager="txManager"/>
+    <!--<tx:annotation-driven transaction-manager="txManager"/>-->
 
-    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property searchType="dataSource" ref="accessKeyDataSource"/>
-    </bean>
+    <!--<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+    <!--<property searchType="dataSource" ref="accessKeyDataSource"/>-->
+    <!--</bean>-->
 
-    <!-- String Key -->
-    <bean id="stringMySqlKeyDao" class="com.akavita.metasearch.keystorage.dao.mysql.MysqlStringKeyDao">
-        <constructor-arg searchType="stringKeyTable" value="${key.storage.bing.table}"/>
-        <constructor-arg searchType="rowMapper">
-            <bean class="com.akavita.metasearch.keystorage.dao.mysql.StringKeyRowMapper"/>
-        </constructor-arg>
-        <constructor-arg searchType="dataSource" ref="accessKeyDataSource"/>
-    </bean>
+    <!--&lt;!&ndash; String Key &ndash;&gt;-->
+    <!--<bean id="stringMySqlKeyDao" class="com.akavita.metasearch.keystorage.dao.mysql.MysqlStringKeyDao">-->
+    <!--<constructor-arg searchType="stringKeyTable" value="${key.storage.bing.table}"/>-->
+    <!--<constructor-arg searchType="rowMapper">-->
+    <!--<bean class="com.akavita.metasearch.keystorage.dao.mysql.StringKeyRowMapper"/>-->
+    <!--</constructor-arg>-->
+    <!--<constructor-arg searchType="dataSource" ref="accessKeyDataSource"/>-->
+    <!--</bean>-->
 
 
-    <bean id="bingKeyProvider" class="com.akavita.metasearch.keystorage.service.StringKeyProvider">
-        <constructor-arg value="bing"/>
-        <constructor-arg ref="stringMySqlKeyDao"/>
-    </bean>
+    <!--<bean id="bingKeyProvider" class="com.akavita.metasearch.keystorage.service.StringKeyProvider">-->
+    <!--<constructor-arg value="bing"/>-->
+    <!--<constructor-arg ref="stringMySqlKeyDao"/>-->
+    <!--</bean>-->
 
-    <!-- Google Key -->
-    <bean id="googleMySqlKeyDao" class="com.akavita.metasearch.keystorage.dao.mysql.MysqlGoogleKeyDao">
-        <constructor-arg searchType="googleKeyTable" value="${key.storage.google.table}"/>
-        <constructor-arg searchType="rowMapper">
-            <bean class="com.akavita.metasearch.keystorage.dao.mysql.GoogleKeyRowMapper"/>
-        </constructor-arg>
-        <constructor-arg searchType="dataSource" ref="accessKeyDataSource"/>
-    </bean>
+    <!--&lt;!&ndash; Google Key &ndash;&gt;-->
+    <!--<bean id="googleMySqlKeyDao" class="com.akavita.metasearch.keystorage.dao.mysql.MysqlGoogleKeyDao">-->
+    <!--<constructor-arg searchType="googleKeyTable" value="${key.storage.google.table}"/>-->
+    <!--<constructor-arg searchType="rowMapper">-->
+    <!--<bean class="com.akavita.metasearch.keystorage.dao.mysql.GoogleKeyRowMapper"/>-->
+    <!--</constructor-arg>-->
+    <!--<constructor-arg searchType="dataSource" ref="accessKeyDataSource"/>-->
+    <!--</bean>-->
 
-    <bean id="googleKeyProvider" class="com.akavita.metasearch.keystorage.service.GoogleKeyProvider">
-        <constructor-arg ref="googleMySqlKeyDao"/>
-    </bean>
+    <!--<bean id="googleKeyProvider" class="com.akavita.metasearch.keystorage.service.GoogleKeyProvider">-->
+    <!--<constructor-arg ref="googleMySqlKeyDao"/>-->
+    <!--</bean>-->
 
-    <bean id="googleMysqlKeyProvider"
-          class="com.akavita.metasearch.keystorage.service.mysql.GoogleMysqlLockingKeyProvider">
-        <constructor-arg searchType="mysqlKeyDao" ref="googleMySqlKeyDao"/>
-        <constructor-arg searchType="keyProvider" ref="googleKeyProvider"/>
-    </bean>
+    <!--<bean id="googleMysqlKeyProvider"-->
+    <!--class="com.akavita.metasearch.keystorage.service.mysql.GoogleMysqlLockingKeyProvider">-->
+    <!--<constructor-arg searchType="mysqlKeyDao" ref="googleMySqlKeyDao"/>-->
+    <!--<constructor-arg searchType="keyProvider" ref="googleKeyProvider"/>-->
+    <!--</bean>-->
 
-    <bean id="bingMysqlKeyProvider"
-          class="com.akavita.metasearch.keystorage.service.mysql.StringMysqlLockingKeyProvider">
-        <constructor-arg searchType="mysqlKeyDao" ref="stringMySqlKeyDao"/>
-        <constructor-arg searchType="keyProvider" ref="bingKeyProvider"/>
-    </bean>
+    <!--<bean id="bingMysqlKeyProvider"-->
+    <!--class="com.akavita.metasearch.keystorage.service.mysql.StringMysqlLockingKeyProvider">-->
+    <!--<constructor-arg searchType="mysqlKeyDao" ref="stringMySqlKeyDao"/>-->
+    <!--<constructor-arg searchType="keyProvider" ref="bingKeyProvider"/>-->
+    <!--</bean>-->
 
-    <bean id="resetTask" class="com.akavita.metasearch.keystorage.task.ResetKeyUsagesTask">
-        <constructor-arg searchType="keyDao" ref="googleMySqlKeyDao"/>
-    </bean>
+    <!--<bean id="resetTask" class="com.akavita.metasearch.keystorage.task.ResetKeyUsagesTask">-->
+    <!--<constructor-arg searchType="keyDao" ref="googleMySqlKeyDao"/>-->
+    <!--</bean>-->
 
-    <task:scheduled-tasks>
-        <task:scheduled ref="resetTask" method="execute" fixed-delay="1800000"/>
-    </task:scheduled-tasks>
+    <!--<task:scheduled-tasks>-->
+    <!--<task:scheduled ref="resetTask" method="execute" fixed-delay="1800000"/>-->
+    <!--</task:scheduled-tasks>-->
+
+    <bean id="searchService"
+          class="services.search.SearchServiceImpl"></bean>
+
+    <bean id="statistics"
+          class="services.statistics.impl.KafkaStatisticsService"></bean>
+
 </beans>

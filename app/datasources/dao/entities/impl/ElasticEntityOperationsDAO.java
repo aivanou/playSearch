@@ -2,11 +2,11 @@ package datasources.dao.entities.impl;
 
 import datasources.dao.entities.EntitiesDAO;
 import datasources.dao.entities.OperationException;
-import model.EntityResponse;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
 import play.libs.F;
 import play.libs.WS;
+import services.entities.Impl.EntityResponse;
 import services.search.provider.SearchProvider;
 
 import java.io.InputStream;
@@ -24,7 +24,9 @@ public abstract class ElasticEntityOperationsDAO<T> implements EntitiesDAO<T> {
                 new F.Function<WS.Response, EntityResponse<String>>() {
                     @Override
                     public EntityResponse<String> apply(WS.Response response) throws Throwable {
-                        return new EntityResponse<String>("EntityResponse: Insert operation finished with OK status");
+
+//                        "EntityResponse: Insert operation finished with OK status"
+                        return new EntityResponse<String>();
                     }
                 }
         ).recover(
@@ -32,7 +34,8 @@ public abstract class ElasticEntityOperationsDAO<T> implements EntitiesDAO<T> {
                     @Override
                     public EntityResponse<String> apply(Throwable throwable) throws Throwable {
                         Logger.error(throwable.getMessage());
-                        return new EntityResponse<String>(throwable);
+//                        throwable
+                        return new EntityResponse<String>();
                     }
                 }
         );
@@ -58,7 +61,8 @@ public abstract class ElasticEntityOperationsDAO<T> implements EntitiesDAO<T> {
                         if (Logger.isDebugEnabled()) {
                             Logger.debug("entities: " + ct.toString());
                         }
-                        return new EntityResponse<T>(ct);
+//                        ct
+                        return new EntityResponse<T>();
                     }
                 }
         ).recover(
@@ -66,7 +70,8 @@ public abstract class ElasticEntityOperationsDAO<T> implements EntitiesDAO<T> {
                     @Override
                     public EntityResponse<T> apply(Throwable throwable) throws Throwable {
                         Logger.error(throwable.getMessage());
-                        return new EntityResponse<T>(throwable);
+//                        throwable
+                        return new EntityResponse<T>();
                     }
                 }
         );
@@ -76,10 +81,11 @@ public abstract class ElasticEntityOperationsDAO<T> implements EntitiesDAO<T> {
     public F.Promise<EntityResponse<String>> delete(final String url) {
 
         return WS.url(url).setTimeout(SearchProvider.TIMEOUT).delete().map(
+//                "Delete Operation: ok"
                 new F.Function<WS.Response, EntityResponse<String>>() {
                     @Override
                     public EntityResponse<String> apply(WS.Response response) throws Throwable {
-                        return new EntityResponse<String>("Delete Operation: ok");
+                        return new EntityResponse<String>();
                     }
                 }
         ).recover(
@@ -87,7 +93,8 @@ public abstract class ElasticEntityOperationsDAO<T> implements EntitiesDAO<T> {
                     @Override
                     public EntityResponse<String> apply(Throwable throwable) throws Throwable {
                         Logger.error(throwable.getMessage());
-                        return new EntityResponse<String>(throwable);
+//                        throwable
+                        return new EntityResponse<String>();
                     }
                 }
         );

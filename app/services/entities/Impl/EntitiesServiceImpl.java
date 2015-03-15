@@ -1,7 +1,6 @@
 package services.entities.Impl;
 
 import datasources.dao.entities.EntitiesDAO;
-import model.EntityResponse;
 import play.Logger;
 import play.libs.F;
 import services.entities.EntitiesService;
@@ -25,7 +24,7 @@ public abstract class EntitiesServiceImpl<T> implements EntitiesService<T> {
      *           <p/>
      *           (maybe I should make an interface with method that will return id and Catalog class will implement it?)
      * @return null if there was an error during converting body to  byte stream
-     *         F.Promise<String> in another case
+     * F.Promise<String> in another case
      */
     @Override
     public F.Promise<EntityResponse<String>> insert(T entity, String id) {

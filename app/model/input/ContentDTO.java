@@ -11,8 +11,12 @@ public class ContentDTO {
 
     @JsonProperty("type")
     private String type;
+
     @JsonProperty("number")
     private int number;
+
+    @JsonProperty("from")
+    private int from;
 
     public String getType() {
         return type;
@@ -30,11 +34,20 @@ public class ContentDTO {
         this.number = number;
     }
 
+    public int getFrom() {
+        return from;
+    }
+
+    public void setFrom(int from) {
+        this.from = from;
+    }
+
     @Override
     public String toString() {
         return "ContentDTO{" +
                 "type='" + type + '\'' +
                 ", number=" + number +
+                ", from=" + from +
                 '}';
     }
 }

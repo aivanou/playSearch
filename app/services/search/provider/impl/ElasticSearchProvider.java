@@ -1,7 +1,12 @@
 package services.search.provider.impl;
 
-import model.*;
-import org.codehaus.jackson.JsonNode;
+import model.Schema;
+import model.SearchType;
+import model.request.ContentRequest;
+import model.response.ContentResponse;
+import model.response.FailedContentResponse;
+import model.response.ResponseItem;
+import model.response.SuccessContentResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import play.Logger;
 import play.Play;
@@ -13,36 +18,34 @@ import services.search.after.LinkyAfterSearchGroups;
 import services.search.provider.SearchProvider;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class ElasticSearchProvider implements SearchProvider {
 
-    private static final IPBalancer<String> DOC_SERVER_BALANCER;
-    private static final Map<SearchType, String> mediaHosts;
+    private static IPBalancer<String> DOC_SERVER_BALANCER;
+    private static Map<SearchType, String> mediaHosts;
     private final AfterSearch afterSearch = new LinkyAfterSearchGroups();
     //TODO query should be improvement.
     private static final String QUERY = "{\n" +
-            "   \"query\":{\n" +
-            "      \"multi_match\":{\n" +
-            "         \"query\":\"%s\",\n" +
-            "         \"fields\":[\n" +
-            "            \"content\",\n" +
-            "            \"title\"\n" +
-            "         ]\n" +
-            "      }\n" +
-            "   },\n" +
-            "   \"from\":%s,\n" +
-            "   \"size\":%s\n" +
+            "  \"query\": {\n" +
+            "    \"multi_match\": {\n" +
+            "      \"query\":      \"%s\",\n" +
+            "      \"fields\":     [ \"title\", \"content\" ]\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"from\": %s,\n" +
+            "  \"size\": %s\n" +
             "}";
 
     static {
-        String docHosts = Play.application().configuration().getString("elastic.docs");
-        DOC_SERVER_BALANCER = new IPBalancer<String>();
-        DOC_SERVER_BALANCER.init(Arrays.asList(docHosts.split(",")));
-
-        mediaHosts = new HashMap<SearchType, String>();
+//        String docHosts = Play.application().configuration().getString("elastic.docs");
+        String docHosts = "http://localhost:9200";
+        DOC_SERVER_BALANCER = new IPBalancer<>(Arrays.asList(docHosts.split(",")));
+//
+        mediaHosts = new HashMap<>();
         mediaHosts.put(SearchType.VIDEO, Play.application().configuration().getString("elastic.video"));
         mediaHosts.put(SearchType.PICTURE, Play.application().configuration().getString("elastic.picture"));
         mediaHosts.put(SearchType.CATALOG, Play.application().configuration().getString("elastic.catalog"));
@@ -51,20 +54,18 @@ public class ElasticSearchProvider implements SearchProvider {
     }
 
     @Override
-    public F.Promise<SearchResponse> doSearch(SearchType type, final SearchRequest req) {
+    public F.Promise<ContentResponse> doSearch(final ContentRequest req) {
 
-        Integer from = req.getPage() * req.getNumber();
-        String q = (new Formatter()).format(QUERY, req.getQuery(), from , req.getNumber()).toString();
-        String url = getHost(type) + "/" + Schema.ELASTIC_SCHEMA + "/" + type.toString() + "/_search";
-
+        String q = (new Formatter()).format(QUERY, req.getQuery(), req.getFrom(), req.getNumber()).toString();
+        String url = getHost(req.getSearchType()) + "/" + Schema.ELASTIC_SCHEMA + "/" + req.getSearchType().getName() + "/_search";
+//        String url = "http://localhost:9200/documents/_search?pretty";
         InputStream queryStream = null;
+        Logger.debug("ElasticSearchProvider: Sending request to : " + url);
         try {
             queryStream = new ByteArrayInputStream(q.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             Logger.error("ElasticSearchProvider: query [" + q + "] can't be uncoded with UTF-8", e);
         }
-
-        final long startTime = System.currentTimeMillis();
 
         if (Logger.isDebugEnabled()) {
             Logger.debug("ElasticSearch url: " + url);
@@ -73,89 +74,122 @@ public class ElasticSearchProvider implements SearchProvider {
         return WS.url(url).setTimeout(TIMEOUT)
                 .setHeader(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=utf-8")
                 .post(queryStream).map(
-                        new F.Function<WS.Response, SearchResponse>() {
-                            public SearchResponse apply(WS.Response response) throws Exception {
+                        new F.Function<WS.Response, ContentResponse>() {
+                            public ContentResponse apply(WS.Response response) throws Exception {
                                 if (Logger.isDebugEnabled()) {
                                     Logger.debug("ElasticSearchProvider: processing response, query [" + req.getQuery() + "]");
                                 }
-
-                                JsonNode hits = response.asJson().get("hits").get("hits");
-                                SearchMetadata metadata = fillMetadata(response.asJson(), req);
-                                SearchResponse searchResponse = parseResponse(hits, req.getQuery(), startTime);
-                                searchResponse.setMetadata(metadata);
-                                searchResponse = afterSearch.process(searchResponse);
-                                Logger.debug("ElasticSearchProvider: items with unique domains: " + searchResponse.getItems().size());
-                                return searchResponse;
+                                System.out.println(response.asJson());
+                                SuccessContentResponse contentResponse = SuccessContentResponse.buildFromElasticJson(response.asJson(), req.getQuery());
+//                                contentResponse = afterSearch.process(contentResponse);
+                                Logger.debug("ElasticSearchProvider: items with unique domains: " + contentResponse.getItems().size());
+                                return contentResponse;
                             }
                         }
-                ).recover(new F.Function<Throwable, SearchResponse>() {
+                ).recover(new F.Function<Throwable, ContentResponse>() {
                     @Override
-                    public SearchResponse apply(Throwable throwable) throws Throwable {
+                    public ContentResponse apply(Throwable throwable) throws Throwable {
                         Logger.error(throwable.getMessage(), throwable);
-                        return new SearchResponse();
+                        return new FailedContentResponse(req.getSearchType(), throwable);
                     }
                 });
     }
 
-    private SearchResponse parseResponse(JsonNode hits, String query, long startTime) throws Exception {
-        Iterator<JsonNode> it = hits.getElements();
-        SearchResponse searchResponse = new SearchResponse();
-        try {
-            while (it.hasNext()) {
-                JsonNode resNode = it.next();
-                ResponseItem responseItem = new ResponseItem();
-                String type = resNode.get("_type").asText().toUpperCase();
-                searchResponse.setSearchType(SearchType.forName(type));
-
-                String score = resNode.get("_score").asText();
-                responseItem.setScore(Double.parseDouble(score));
-
-                JsonNode source = resNode.get("_source");
-                Iterator<Map.Entry<String, JsonNode>> fieldIt = source.getFields();
-
-                while (fieldIt.hasNext()) {
-                    Map.Entry<String, JsonNode> entry = fieldIt.next();
-                    if (entry.getKey().equals(Schema.CONTENT)) {
-                        responseItem.setSnippet(entry.getValue().asText());
-
-                    } else if (entry.getKey().equals(Schema.TITLE)) {
-                        responseItem.setTitle(entry.getValue().asText());
-
-                    } else if (entry.getKey().equals(Schema.URL)) {
-                        responseItem.setUrl(entry.getValue().asText());
-
-                    } else if (entry.getKey().equals(Schema.INDEXED_TIME)) {
-                        responseItem.setIndexed(Long.parseLong(entry.getValue().asText()));
-
-                    } else {
-                        responseItem.addParams(entry.getKey(), entry.getValue().asText());
-                    }
-                }
-                searchResponse.addItem(responseItem);
-            }
-        } catch (Exception ex) {
-            Logger.error("ElasticSearchProvider: Error during parsing search result for query [" + query + "]");
-            throw ex;
-        }
-        if (Logger.isDebugEnabled()) {
-            long time = (System.currentTimeMillis() - startTime);
-            Logger.debug("ElasticSearchProvider: query [" + query + "], time: " + time + ", found results: " + searchResponse.getItems().size());
-        }
-        return searchResponse;
-    }
-
-    private SearchMetadata fillMetadata(JsonNode response, SearchRequest req) throws NumberFormatException {
-        int time = Integer.parseInt(response.get("took").asText());
-        int total = Integer.parseInt(response.get("hits").get("total").asText());
-        return new SearchMetadata(req.getQuery(), total, time, req.getNumber());
-    }
-
     public static String getHost(SearchType type) {
         if (type == SearchType.DOCS) {
-            return DOC_SERVER_BALANCER.getNext();
+            return DOC_SERVER_BALANCER.getHost();
         } else {
             return mediaHosts.get(type);
         }
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        System.out.println("hi there");
+        String q = "{\n" +
+                "  \"query\": {\n" +
+                "    \"multi_match\": {\n" +
+                "      \"query\":      \"%s\",\n" +
+                "      \"fields\":     [ \"title\", \"content\" ]\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"from\": %s,\n" +
+                "  \"size\": %s\n" +
+                "}";
+//        String query = String.format(q, "plbvryd", 0, 20);
+//        InputStream queryStream = new ByteArrayInputStream(query.getBytes("UTF-8"));
+//        String surl = "http://localhost:9200/documents/_search?pretty";
+//        WS.Response response = WS.url(surl).setTimeout(2000)
+//                .setHeader(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=utf-8")
+//                .post(queryStream).get();
+//        System.out.println(response.asJson());
+//        String url = "http://localhost:9200/linky/document";
+//        new ElasticSearchProvider().addRandomDocuments(url, 10);
+        SuccessContentResponse r = (SuccessContentResponse) new ElasticSearchProvider().doSearch(new ContentRequest("lvmcp", SearchType.DOCS, 20, 0)).get();
+        System.out.println(r.getItems().size());
+        for (ResponseItem item : r.getItems()) {
+            System.out.println(item);
+        }
+        System.out.println(r.toJson());
+    }
+
+    public void addRandomDocuments(String url, int number) {
+        for (int i = 0; i < number; ++i) {
+            try {
+                System.out.println(addRandomDocument(url).get().getBody());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public F.Promise<WS.Response> addRandomDocument(String url) throws UnsupportedEncodingException {
+        String title = randomText(2, 4, 5, 8);
+        String text = randomText(8, 20, 3, 8);
+        String docUrl = "http://test.com/" + randomString(5, 10);
+        return addDocument(title, text, docUrl, System.nanoTime(), url);
+    }
+
+    public F.Promise<WS.Response> addDocument(String title, String content, String documentUrl, long indexed, String url) throws UnsupportedEncodingException {
+        String q = "{\n" +
+                "        \"content\":\"%s\",\n" +
+                "        \"title\":\"%s\",\n" +
+                "        \"url\":\"%s\",\n" +
+                "        \"indexed\":%s\n" +
+                "}";
+        String query = String.format(q, content, title, documentUrl, indexed);
+        return execute(url, query, 3000);
+    }
+
+    public F.Promise<WS.Response> execute(String url, String query, int timeout) throws UnsupportedEncodingException {
+        InputStream queryStream = new ByteArrayInputStream(query.getBytes("UTF-8"));
+        return WS.url(url).setTimeout(timeout)
+                .setHeader(HttpHeaders.Names.CONTENT_TYPE, "application/json; charset=utf-8")
+                .post(queryStream);
+    }
+
+    public String randomText(int min, int max, int minStr, int maxStr) {
+        StringBuilder text = new StringBuilder();
+        int len = new Random().nextInt(max - min) + min;
+        for (int i = 0; i < len; ++i) {
+            text.append(randomString(minStr, maxStr));
+            text.append(" ");
+        }
+        return text.toString();
+    }
+
+    public String randomString(int min, int max) {
+        StringBuilder str = new StringBuilder();
+        int len = new Random().nextInt(max - min) + min;
+        for (int i = 0; i < len; ++i) {
+            str.append(randomCharacter());
+        }
+        return str.toString();
+    }
+
+    public char randomCharacter() {
+        Random r = new Random();
+        return (char) (r.nextInt(122 - 97) + 97);
     }
 
 }

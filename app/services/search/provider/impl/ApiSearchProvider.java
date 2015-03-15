@@ -1,8 +1,8 @@
 package services.search.provider.impl;
 
 import com.ning.http.client.Response;
-import model.ResponseItem;
-import model.SearchResponse;
+import model.response.ResponseItem;
+import model.response.SearchResponse;
 import model.SearchType;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
@@ -43,9 +43,9 @@ public abstract class ApiSearchProvider implements SearchProvider {
         Logger.trace(String.format("Got JSON: %s", json));
         List<ResponseItem> items = parse(json, type);
         Logger.trace(String.format("Got %s items from given JSON", items.size()));
-        SearchResponse resp = new SearchResponse(type, items);
-        Logger.debug(String.format("Got response: %s", resp));
-        return resp;
+//        SearchResponse resp = new SearchResponse(type, items);
+        Logger.debug(String.format("Got response: %s", "rs"));
+        return null;
     }
 
     protected SearchResponse convert(Response response, SearchType type) throws IOException {
@@ -53,9 +53,9 @@ public abstract class ApiSearchProvider implements SearchProvider {
         Logger.trace(String.format("Got JSON: %s", json));
         List<ResponseItem> items = parse(json, type);
         Logger.trace(String.format("Got %s items from given JSON", items.size()));
-        SearchResponse resp = new SearchResponse(type, items);
-        Logger.debug(String.format("Got response: %s", resp));
-        return resp;
+//        SearchResponse resp = new SearchResponse(type, items);
+        Logger.debug(String.format("Got response: %s", ""));
+        return null;
     }
 
     /**

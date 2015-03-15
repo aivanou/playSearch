@@ -1,8 +1,8 @@
 package services.search.shuffler;
 
-import model.ResponseItem;
-import model.SearchResponse;
 import model.SearchType;
+import model.response.ResponseItem;
+import model.response.SearchResponse;
 
 import java.util.*;
 
@@ -11,23 +11,23 @@ public class DefaultResponseShuffler implements IResponseShuffler {
     public Collection<ResponseItem> shuffle(Collection<SearchResponse> input) {
         Map<SearchType, Iterator<ResponseItem>> itMap = new EnumMap<SearchType, Iterator<ResponseItem>>(SearchType.class);
 
-        for (SearchResponse item : input) {
-            if (item.getItems().iterator() != null && item.getItems().iterator().hasNext()) {
-                SearchType type = item.getSearchType();
-                if (itMap.containsKey(type)) {
-                    Iterator<ResponseItem> tempIterator = itMap.get(type);
-                    itMap.put(type, addResults(tempIterator, item.getItems()));
-                } else {
-                    itMap.put(item.getSearchType(), item.getItems().iterator());
-                }
-            }
-        }
+//        for (SearchResponse item : input) {
+//            if (item.getItems().iterator() != null && item.getItems().iterator().hasNext()) {
+//                SearchType type = item.getSearchType();
+//                if (itMap.containsKey(type)) {
+//                    Iterator<ResponseItem> tempIterator = itMap.get(type);
+//                    itMap.put(type, addResults(tempIterator, item.getItems()));
+//                } else {
+//                    itMap.put(item.getSearchType(), item.getItems().iterator());
+//                }
+//            }
+//        }
 
         Collection<ResponseItem> shuffledItems = new ArrayList<ResponseItem>();
         int curr_priority = 1;
         int faults = 0;
         while (true) {
-            SearchType curr_type = SearchType.getByPriority(curr_priority);
+            SearchType curr_type = SearchType.getByName("name");
             Iterator<ResponseItem> itemIt = itMap.get(curr_type);
             if (itemIt == null || !itemIt.hasNext()) {
                 curr_priority = this.changePriority(curr_priority);
@@ -64,7 +64,7 @@ public class DefaultResponseShuffler implements IResponseShuffler {
                 return;
             }
             ResponseItem ri = it.next();
-            ri.setType(type);
+//            ri.setType(type);
             items.add(ri);
         }
     }

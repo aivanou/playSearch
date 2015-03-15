@@ -10,9 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
-/**
- * @author egor, Date: 12/21/12
- */
+
 public class PlainSearchTask extends SearchTask {
     private String query;
     private String requestURL;

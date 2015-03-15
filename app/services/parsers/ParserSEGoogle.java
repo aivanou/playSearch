@@ -1,6 +1,6 @@
 package services.parsers;
 
-import model.ResponseItem;
+import model.response.ResponseItem;
 import model.SearchEngineType;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
@@ -35,11 +35,11 @@ public class ParserSEGoogle extends ParserSE {
         if (url == null) {
             throw new MalformedURLException(String.format("Bad dirty url %s", dirtyUrl));
         }
-        ResponseItem item = new ResponseItem();
-        item.setUrl(url);
-        item.setTitle(title);
-        item.setSnippet(snippet);
-        return item;
+//        ResponseItem item = new ResponseItem();
+//        item.setUrl(url);
+//        item.setTitle(title);
+//        item.setSnippet(snippet);
+        return null;
     }
 
     private String parseDirtyUrl(String dirtyUrl) {
