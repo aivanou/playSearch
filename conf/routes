@@ -3,15 +3,15 @@
 # ~~~~
 
 # Home page
-POST    /search                     controllers.Application.search()
+POST          /search              controllers.SearchController.search()
 
-GET     /version                    controllers.VersionController.getVersion()
+GET           /version             controllers.VersionController.getVersion()
 
 #ok-catalog
 
-POST 	/catalog                    controllers.CatalogController.insertCatalogue()
-GET	    /catalog/:url 	       	    controllers.CatalogController.getCatalogue(url:String)
-DELETE  /catalog/:url  	       	    controllers.CatalogController.deleteCatalogue(url:String)
+POST          /catalog             controllers.CatalogController.insertCatalog()
+GET           /catalog/:url        controllers.CatalogController.getCatalog(url:String)
+DELETE        /catalog/:url        controllers.CatalogController.deleteCatalog(url:String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET           /assets/*file        controllers.Assets.at(path="/public", file)

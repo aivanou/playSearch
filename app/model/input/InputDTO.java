@@ -7,8 +7,9 @@ import javax.annotation.Generated;
 import java.util.Collection;
 
 /**
- * The input json is translated into this Data Transfer Object,
- * than used by @see model.input.SearchRequest
+ * The input json is parsed to this POJO( internally called Data Transfer Object),
+ *
+ * @see model.input.SearchRequest
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")

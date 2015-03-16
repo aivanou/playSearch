@@ -5,6 +5,11 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.annotation.Generated;
 
+/**
+ * The input json for search queries is parsed to this POJO
+ *
+ * @see model.input.InputDTO uses this class
+ */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 public class ContentDTO {

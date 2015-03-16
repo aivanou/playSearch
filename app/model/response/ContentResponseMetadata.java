@@ -8,13 +8,12 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**
- * used by @see ContentResponse ;
- * it saves here information about elasticsearch query execution
- * like query time, size, etc.
+ * Saves the information about seach provider work
+ * Used by @see model.response.SuccessContentResponse
  */
 public class ContentResponseMetadata implements Serializable, Jsonable {
 
-    //add longid
+    private static final long serialVersionUID = 899171295662716147L;
 
     private int nresults;
     private int queryTime;

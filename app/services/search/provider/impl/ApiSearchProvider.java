@@ -1,9 +1,10 @@
 package services.search.provider.impl;
 
 import com.ning.http.client.Response;
+import model.response.ContentResponse;
+import model.response.ContentResponseMetadata;
 import model.response.ResponseItem;
-import model.response.SearchResponse;
-import model.SearchType;
+import model.response.SuccessContentResponse;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
 import play.libs.WS;
@@ -13,12 +14,6 @@ import services.search.provider.impl.apiutil.URLBuilder;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * ApiSearchProvider ...
- *
- * @author Vadim Martos
- * @date 12/13/12
- */
 public abstract class ApiSearchProvider implements SearchProvider {
 
     public static final int HTTP_UNAUTHORIZED = 403;
@@ -38,24 +33,22 @@ public abstract class ApiSearchProvider implements SearchProvider {
      * @param type     is a type of returning response
      * @return response
      */
-    protected SearchResponse convert(WS.Response response, SearchType type) {
+    protected ContentResponse convert(WS.Response response, String type) {
         JsonNode json = response.asJson();
         Logger.trace(String.format("Got JSON: %s", json));
         List<ResponseItem> items = parse(json, type);
         Logger.trace(String.format("Got %s items from given JSON", items.size()));
-//        SearchResponse resp = new SearchResponse(type, items);
-        Logger.debug(String.format("Got response: %s", "rs"));
-        return null;
+        ContentResponse resp = new SuccessContentResponse(type, items, new ContentResponseMetadata(0, 0, ""));
+        return resp;
     }
 
-    protected SearchResponse convert(Response response, SearchType type) throws IOException {
+    protected ContentResponse convert(Response response, String type) throws IOException {
         JsonNode json = play.libs.Json.parse(response.getResponseBody());
         Logger.trace(String.format("Got JSON: %s", json));
         List<ResponseItem> items = parse(json, type);
         Logger.trace(String.format("Got %s items from given JSON", items.size()));
-//        SearchResponse resp = new SearchResponse(type, items);
-        Logger.debug(String.format("Got response: %s", ""));
-        return null;
+        ContentResponse resp = new SuccessContentResponse(type, items, new ContentResponseMetadata(0, 0, ""));
+        return resp;
     }
 
     /**
@@ -65,5 +58,5 @@ public abstract class ApiSearchProvider implements SearchProvider {
      * @param type of returning items
      * @return result of parsing
      */
-    protected abstract List<ResponseItem> parse(JsonNode json, SearchType type);
+    protected abstract List<ResponseItem> parse(JsonNode json, String type);
 }

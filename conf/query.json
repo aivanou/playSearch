@@ -1,54 +1,76 @@
 {
-  "elastic": {
-    "commands": {
-      "search": {
-        "query": {
-          "multi_match": {
-            "query": "%s",
-            "fields": []
+  "searchEngines": ["elastic"],
+  "commands": [
+    {
+      "engine": "elastic",
+      "values": [
+        {
+          "command": "search",
+          "value": {
+            "query": {
+              "multi_match": {
+                "query": "%s",
+                "fields": "%s"
+              }
+            },
+            "from": "%s",
+            "size": "%s"
           }
         },
-        "from": "%i",
-        "size": "%i"
-      },
-      "insert": {
-        "content": "%s",
-        "title": "%s",
-        "url": "%s",
-        "indexed": ""
-      }
+        {
+          "command": "insert",
+          "value": {
+            "content": "%s",
+            "title": "%s",
+            "url": "%s",
+            "indexed": ""
+          }
+        }
+      ]
     }
-  },
-  "content": {
-    "document": {
+  ],
+  "content": [
+    {
+      "name": "document",
       "searchFields": [
         "title",
         "content"
+      ],
+      "hosts": [
+        {
+          "engine": "elastic",
+          "hosts": ["http://localhost:9200"]
+        }
       ]
     },
-    "news": {
+    {
+      "name": "news",
       "searchFields": [
         "title",
         "content",
         "time"
+      ],
+      "hosts": [
+        {
+          "engine": "elastic",
+          "hosts": ["http://localhost:9200"]
+        }
       ]
     },
-    "default": {
+    {
+      "name": "default",
       "searchFields": [
         "title",
         "content"
+      ],
+      "hosts": [
+        {
+          "engine": "elastic",
+          "hosts": ["http://localhost:9200"]
+        }
       ]
     }
-  }
+  ]
 }
 
 
-/*
-VIDEO("video"),
-NEWS("news"),
-DOCS("document"),
-PICTURE("picture"),
-CATALOG("category"),
-ADDRESS("address"),
-UNDEFINED("undefined");
-*/

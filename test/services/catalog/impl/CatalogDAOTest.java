@@ -2,14 +2,13 @@ package services.catalog.impl;
 
 import datasources.dao.entities.EntitiesDAO;
 import datasources.dao.entities.impl.CatalogElasticSearchDAOImpl;
-
-import java.io.InputStream;
-
 import model.input.Catalog;
 import org.junit.Test;
 import org.mockito.Mockito;
 import services.entities.EntitiesService;
 import services.entities.Impl.CatalogServiceImpl;
+
+import java.io.InputStream;
 
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;

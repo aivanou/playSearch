@@ -1,7 +1,9 @@
 package model.response;
 
 /**
- * The metadata information
+ * The metadata response information
+ *
+ * @see model.response.SearchResponse uses this class
  */
 public class SearchResponseMetadata {
 

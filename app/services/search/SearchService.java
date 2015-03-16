@@ -5,7 +5,9 @@ import play.libs.F;
 
 /**
  * Represents the search service
- * Response should support @see model.Jsonable
+ * Response should support
+ *
+ * @see model.Jsonable
  * Returns the play's promise of Response
  */
 public interface SearchService<REQ, RESP extends Jsonable> {

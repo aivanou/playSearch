@@ -1,6 +1,7 @@
 package services.search.provider.impl.apiutil;
 
-import model.request.SearchRequest;
+import model.request.ContentRequest;
+import model.request.ExternalContentRequest;
 import play.Logger;
 
 import java.net.MalformedURLException;
@@ -8,12 +9,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * URLBuilder ...
- *
- * @author vadim
- * @date 12/12/12
- */
+
 public abstract class URLBuilder {
     protected final String base;
 
@@ -28,7 +24,7 @@ public abstract class URLBuilder {
      * @return url for API provider
      * @throws IllegalArgumentException if request is invalid; {@see validate(SearchRequest request)} method
      */
-    public abstract String build(SearchRequest req) throws IllegalArgumentException;
+    public abstract String build(ExternalContentRequest req) throws IllegalArgumentException;
 
     /**
      * Validate request for accuracy. Request should has not nullable and not empty query,
@@ -37,13 +33,9 @@ public abstract class URLBuilder {
      * @param request to check
      * @throws IllegalArgumentException if validation fails
      */
-    protected void validate(SearchRequest request) throws IllegalArgumentException {
+    protected void validate(ContentRequest request) throws IllegalArgumentException {
         if (request.getQuery() == null || request.getQuery().isEmpty()) {
             throw new IllegalArgumentException(String.format("Query of request can't be null or empty: %s", request));
-        } else if (request.getLang() == null || request.getLang().isEmpty()) {
-            throw new IllegalArgumentException(String.format("Lang of request can't be null or empty: %s", request));
-        } else if (request.getRegion() == null || request.getRegion().isEmpty()) {
-            throw new IllegalArgumentException(String.format("Region of request can't be null or empty: %s", request));
         }
     }
 

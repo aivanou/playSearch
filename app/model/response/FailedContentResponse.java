@@ -1,16 +1,14 @@
 package model.response;
 
-import model.SearchType;
-
 /**
- * If search request has errors, this message will be transferred to the client
+ * If search provider had errors, it will return to the client this response otherwise @see model.response.SuccessContentResponse
  */
 public class FailedContentResponse extends ContentResponse {
 
     private Throwable exception;
     private String errorMessage;
 
-    public FailedContentResponse(SearchType searchType, Throwable exception) {
+    public FailedContentResponse(String searchType, Throwable exception) {
         super(searchType);
         this.exception = exception;
         this.errorMessage = exception.getMessage();

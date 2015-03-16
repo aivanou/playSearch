@@ -25,15 +25,15 @@ public class KafkaStatisticsService<T extends Writable> implements StatService<T
     private String topic = Play.application().configuration().getString("statistics.kafka.topic", "statistics");
 
     private void configure() {
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Play.application().configuration().getString("statistics.kafka.servers", "localhost"));
-        props.put(ProducerConfig.RETRIES_CONFIG, Play.application().configuration().getString("statistics.kafka.servers", "localhost"));
-        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, Play.application().configuration().getString("statistics.kafka.compression.type", "none"));
-        props.put(ProducerConfig.BATCH_SIZE_CONFIG, Play.application().configuration().getString("statistics.kafka.batch", "200"));
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
-
-        producer = new KafkaProducer<>(props);
+//        Properties props = new Properties();
+//        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Play.application().configuration().getString("statistics.kafka.servers", "localhost"));
+//        props.put(ProducerConfig.RETRIES_CONFIG, Play.application().configuration().getString("statistics.kafka.servers", "localhost"));
+//        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, Play.application().configuration().getString("statistics.kafka.compression.type", "none"));
+//        props.put(ProducerConfig.BATCH_SIZE_CONFIG, Play.application().configuration().getString("statistics.kafka.batch", "200"));
+//        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+//        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+//
+//        producer = new KafkaProducer<>(props);
     }
 
     @Override

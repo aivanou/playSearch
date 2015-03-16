@@ -5,7 +5,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import services.spring.SpringContextLoader;
 
 /**
- * Uses spring to return the appropriate search service
+ * Uses spring to instantiate the appropriate
+ *
+ * @see services.search.SearchService
  */
 
 public class SearchServiceFactory {

@@ -1,13 +1,15 @@
 package model.response;
 
 import model.Jsonable;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The search response, aggregates a set of @see model.response.ContentResponse and @see model.response.SearchResponseMetadata
+ */
 
 public class SearchResponse implements Jsonable {
 

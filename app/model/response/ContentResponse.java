@@ -1,20 +1,23 @@
 package model.response;
 
 import model.Jsonable;
-import model.SearchType;
 
 /**
- * The Resposne from search
+ * The response from the @see services.search.provider.SearchProvider
+ * It can be one of two types:
+ *
+ * @see model.response.SuccessContentResponse or @see model.response.FailedContentResponse
+ * but both of them will have one parameter: the search content type
  */
 public abstract class ContentResponse implements Jsonable {
 
-    protected SearchType searchType;
+    protected String searchType;
 
-    public ContentResponse(SearchType searchType) {
+    public ContentResponse(String searchType) {
         this.searchType = searchType;
     }
 
-    public SearchType getSearchType() {
+    public String getSearchType() {
         return searchType;
     }
 

@@ -2,7 +2,6 @@ package model.response;
 
 import model.Jsonable;
 import model.Schema;
-import model.SearchType;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import services.util.ToString;
@@ -15,7 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The item of the request
+ * Every @see model.response.SuccessContentResponse aggregates a set of ResponseItems as a result entities
  */
 public class ResponseItem implements Comparable<ResponseItem>, Comparator<ResponseItem>, Serializable, Jsonable {
 
@@ -24,8 +23,8 @@ public class ResponseItem implements Comparable<ResponseItem>, Comparator<Respon
     protected String url;
     protected String title;
     protected String snippet;
+    protected String type;
     protected double score;
-    protected SearchType type;
     protected long indexed;
     protected Map<String, String> params = new HashMap<String, String>();
 
@@ -53,10 +52,10 @@ public class ResponseItem implements Comparable<ResponseItem>, Comparator<Respon
                 params.put(entry.getKey(), entry.getValue().asText());
             }
         }
-        return new ResponseItem(url, title, content, SearchType.DOCS, score, indexed);
+        return new ResponseItem(url, title, content, type, score, indexed);
     }
 
-    public ResponseItem(String url, String title, String snippet, SearchType type, double score, long indexed) {
+    public ResponseItem(String url, String title, String snippet, String type, double score, long indexed) {
         this.url = url;
         this.title = title;
         this.snippet = snippet;
@@ -111,7 +110,7 @@ public class ResponseItem implements Comparable<ResponseItem>, Comparator<Respon
         return score;
     }
 
-    public SearchType getType() {
+    public String getType() {
         return type;
     }
 

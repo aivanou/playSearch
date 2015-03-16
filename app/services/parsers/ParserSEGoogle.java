@@ -1,7 +1,6 @@
 package services.parsers;
 
 import model.response.ResponseItem;
-import model.SearchEngineType;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,11 +11,10 @@ import java.net.MalformedURLException;
 /**
  * ParserSEGoogle ...
  *
- * @date Nov 14, 2012
  * @author Alexander Latysh
  * @version 1.0.0
+ * @date Nov 14, 2012
  * @email <alatysh@linky.asia>
- *
  */
 public class ParserSEGoogle extends ParserSE {
 
@@ -35,11 +33,8 @@ public class ParserSEGoogle extends ParserSE {
         if (url == null) {
             throw new MalformedURLException(String.format("Bad dirty url %s", dirtyUrl));
         }
-//        ResponseItem item = new ResponseItem();
-//        item.setUrl(url);
-//        item.setTitle(title);
-//        item.setSnippet(snippet);
-        return null;
+        ResponseItem item = new ResponseItem(url, title, snippet, "document", 1.0, System.nanoTime());
+        return item;
     }
 
     private String parseDirtyUrl(String dirtyUrl) {
@@ -69,7 +64,8 @@ public class ParserSEGoogle extends ParserSE {
 
     @Override
     protected String getSearchEngineName() {
-        return SearchEngineType.GOOGLE.name();
+//        return SearchEngineType.GOOGLE.name();
+        return "";
     }
 
     @Override

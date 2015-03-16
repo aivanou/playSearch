@@ -2,10 +2,11 @@ package services.search.provider.impl;
 
 import com.akavita.metasearch.keystorage.domain.StringKey;
 import com.akavita.metasearch.keystorage.service.KeyProvider;
-import model.response.ResponseItem;
-import model.SearchType;
 import model.request.ContentRequest;
+import model.request.ExternalContentRequest;
 import model.response.ContentResponse;
+import model.response.FailedContentResponse;
+import model.response.ResponseItem;
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.JsonNode;
 import play.Logger;
@@ -19,12 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
- * BingApiSearchProvider ...
- *
- * @author Vadim Martos
- * @date 12/11/12
- */
 public final class BingApiSearchProvider extends ApiSearchProvider {
     private static final String D = "d";
     private static final String RESULTS = "results";
@@ -40,21 +35,19 @@ public final class BingApiSearchProvider extends ApiSearchProvider {
     }
 
     @Override
-    public F.Promise<ContentResponse> doSearch(final ContentRequest req) throws IllegalArgumentException {
-        Logger.debug(String.format("Bing API accepted: %s", req));
-        if (req.getSearchType() != SearchType.DOCS) {
-            throw new IllegalArgumentException(String.format("Bing API can't be used for searching through '%s'; documents only", req.getSearchType()));
-        }
+    public F.Promise<ContentResponse> doSearch(final ContentRequest req) throws IllegalArgumentException, ClassCastException {
+        if (req instanceof ExternalContentRequest)
+            throw new ClassCastException("Bing supports only external content requests");
+        ExternalContentRequest ereq = (ExternalContentRequest) req;
+        Logger.debug(String.format("Bing API accepted: %s", ereq));
         StringKey sKey = provider.getValidKey();
         if (sKey == null) {
             Logger.warn("Has no key for Bing API");
-//            return F.Promise.pure(new SearchResponse());
-            return null;
+            return F.Promise.pure((ContentResponse) new FailedContentResponse("Has no key for Bing API", new Exception("Has no key for Bing API")));
         }
         final String key = sKey.getValue().getKey();
         final String encrKey = String.format("Basic %s", correct(key));
-//        final String url = urlBuilder.build(req);
-        final String url = null;
+        final String url = urlBuilder.build(ereq);
         Logger.debug(String.format("Bing API goes to url: %s", url));
 
 
@@ -63,37 +56,35 @@ public final class BingApiSearchProvider extends ApiSearchProvider {
         for (Map.Entry<String, String> q : qParams.entrySet()) {
             holder.setQueryParameter(q.getKey(), q.getValue());
         }
-//        return holder.get().map(new F.Function<WS.Response, SearchResponse>() {
-//            @Override
-//            public SearchResponse apply(WS.Response response) throws Throwable {
-//                int code = response.getStatus();
-//                Logger.debug("Code " + code);
-//                switch (code) {
-//                    case HTTP_UNAUTHORIZED: {
-//                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
-////                        return new SearchResponse();
-//                        return null;
-//                    }
-//                    case HTTP_SUCCESS: {
-//                        return convert(response, type);
-//                    }
-//                    default: {
-//                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
-////                        return new SearchResponse();
-//                        return null;
-//                    }
-//                }
-//            }
-//        }).recover(new F.Function<Throwable, SearchResponse>() {
-//            @Override
-//            public SearchResponse apply(Throwable throwable) throws Throwable {
-//                Logger.error(String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()));
-////                return new SearchResponse(type);
-//                return null;
-//            }
-//        });
-
-        return null;
+        return holder.get().map(new F.Function<WS.Response, ContentResponse>() {
+            @Override
+            public ContentResponse apply(WS.Response response) throws Throwable {
+                int code = response.getStatus();
+                Logger.debug("Code " + code);
+                switch (code) {
+                    case HTTP_UNAUTHORIZED: {
+                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
+                        return new FailedContentResponse(String.format("Key %s is not valid for Bing API, code %s", key, code),
+                                new Exception("unauthorized "));
+                    }
+                    case HTTP_SUCCESS: {
+                        return convert(response, "document");
+                    }
+                    default: {
+                        Logger.warn(String.format("Key %s is not valid for Bing API, code %s", key, code));
+                        return new FailedContentResponse(String.format("Key %s is not valid for Bing API, code %s", key, code),
+                                new Exception("unauthorized access to : " + url));
+                    }
+                }
+            }
+        }).recover(new F.Function<Throwable, ContentResponse>() {
+            @Override
+            public ContentResponse apply(Throwable throwable) throws Throwable {
+                Logger.error(String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()));
+                return new FailedContentResponse(
+                        String.format("Failed to access key API for Bing because of: %s", throwable.getLocalizedMessage()), throwable);
+            }
+        });
     }
 
     /**
@@ -109,7 +100,7 @@ public final class BingApiSearchProvider extends ApiSearchProvider {
     }
 
     @Override
-    protected List<ResponseItem> parse(JsonNode json, SearchType type) {
+    protected List<ResponseItem> parse(JsonNode json, String type) {
         long ms = System.currentTimeMillis();
         Logger.trace(String.format("Parsing JSON: %s", json));
         List<ResponseItem> items = new LinkedList<ResponseItem>();

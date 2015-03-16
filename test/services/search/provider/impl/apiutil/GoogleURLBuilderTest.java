@@ -1,6 +1,6 @@
 package services.search.provider.impl.apiutil;
 
-import model.request.SearchRequest;
+import model.request.ExternalContentRequest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,16 +15,11 @@ import org.junit.Test;
 public class GoogleURLBuilderTest {
 
     private URLBuilder builder = GoogleURLBuilder.defaultInstance();
-    private SearchRequest request = null;
+    private ExternalContentRequest request = null;
 
     @Before
     public void setUp() throws Exception {
-//        request.setQuery("test");
-//        request.setLang("th");
-//        request.setNumber(10);
-//        request.setPage(0);
-//        request.setRegion("TH");
-//        request.addSearchTypes(SearchType.DOCS);
+        request = new ExternalContentRequest("test", 10, 0, "UTF-8", "th", "TH");
     }
 
     @After

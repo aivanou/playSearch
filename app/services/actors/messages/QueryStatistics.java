@@ -21,7 +21,7 @@ public class QueryStatistics implements Serializable, Writable {
     private long timestamp;
     private String query;
 
-    private QueryStatistics(long timestamp, String query) {
+    public QueryStatistics(long timestamp, String query) {
         this.timestamp = timestamp;
         this.query = query;
     }

@@ -1,21 +1,23 @@
 package services.search.provider.impl;
 
 import model.Schema;
+import model.SearchEngineType;
 import model.SearchType;
+import model.commands.Command;
 import model.request.ContentRequest;
+import model.request.InternalContentRequest;
 import model.response.ContentResponse;
 import model.response.FailedContentResponse;
 import model.response.ResponseItem;
 import model.response.SuccessContentResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import play.Logger;
-import play.Play;
 import play.libs.F;
 import play.libs.WS;
-import services.search.IPBalancer;
 import services.search.after.AfterSearch;
 import services.search.after.LinkyAfterSearchGroups;
 import services.search.provider.SearchProvider;
+import util.SearchConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,42 +27,34 @@ import java.util.*;
 
 public class ElasticSearchProvider implements SearchProvider {
 
-    private static IPBalancer<String> DOC_SERVER_BALANCER;
-    private static Map<SearchType, String> mediaHosts;
+    private final SearchEngineType type;
     private final AfterSearch afterSearch = new LinkyAfterSearchGroups();
-    //TODO query should be improvement.
-    private static final String QUERY = "{\n" +
-            "  \"query\": {\n" +
-            "    \"multi_match\": {\n" +
-            "      \"query\":      \"%s\",\n" +
-            "      \"fields\":     [ \"title\", \"content\" ]\n" +
-            "    }\n" +
-            "  },\n" +
-            "  \"from\": %s,\n" +
-            "  \"size\": %s\n" +
-            "}";
 
-    static {
-//        String docHosts = Play.application().configuration().getString("elastic.docs");
-        String docHosts = "http://localhost:9200";
-        DOC_SERVER_BALANCER = new IPBalancer<>(Arrays.asList(docHosts.split(",")));
-//
-        mediaHosts = new HashMap<>();
-        mediaHosts.put(SearchType.VIDEO, Play.application().configuration().getString("elastic.video"));
-        mediaHosts.put(SearchType.PICTURE, Play.application().configuration().getString("elastic.picture"));
-        mediaHosts.put(SearchType.CATALOG, Play.application().configuration().getString("elastic.catalog"));
-        mediaHosts.put(SearchType.ADDRESS, Play.application().configuration().getString("elastic.address"));
-        mediaHosts.put(SearchType.NEWS, Play.application().configuration().getString("elastic.news"));
+    private List<Command> commands;
+
+    public ElasticSearchProvider(SearchEngineType type) {
+        this.type = type;
+        this.commands = new ArrayList(SearchConfiguration.getInstance().getCommandsByEngine(type));
     }
 
     @Override
     public F.Promise<ContentResponse> doSearch(final ContentRequest req) {
 
-        String q = (new Formatter()).format(QUERY, req.getQuery(), req.getFrom(), req.getNumber()).toString();
-        String url = getHost(req.getSearchType()) + "/" + Schema.ELASTIC_SCHEMA + "/" + req.getSearchType().getName() + "/_search";
+        if (req instanceof InternalContentRequest)
+            throw new ClassCastException("Elastic search accepts only instances of internal content requests");
+        final InternalContentRequest ireq = (InternalContentRequest) req;
+        Command command = getCommandByName("search");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("from", req.getFrom() + "");
+        parameters.put("size", req.getNumber() + "");
+        parameters.put("query", req.getQuery());
+        String q = command.fill(parameters, ireq.getSearchType().getSearchFields());
+//        String q = (new Formatter()).format(QUERY, req.getQuery(), req.getFrom(), req.getNumber()).toString();
+        String url = getHost(ireq.getSearchType(), type) + "/" + Schema.ELASTIC_SCHEMA + "/" + ireq.getSearchType().getName() + "/_search";
 //        String url = "http://localhost:9200/documents/_search?pretty";
         InputStream queryStream = null;
         Logger.debug("ElasticSearchProvider: Sending request to : " + url);
+        Logger.debug("Elastic search query: " + q);
         try {
             queryStream = new ByteArrayInputStream(q.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -77,10 +71,10 @@ public class ElasticSearchProvider implements SearchProvider {
                         new F.Function<WS.Response, ContentResponse>() {
                             public ContentResponse apply(WS.Response response) throws Exception {
                                 if (Logger.isDebugEnabled()) {
-                                    Logger.debug("ElasticSearchProvider: processing response, query [" + req.getQuery() + "]");
+                                    Logger.debug("ElasticSearchProvider: processing response, query [" + ireq.getQuery() + "]");
                                 }
                                 System.out.println(response.asJson());
-                                SuccessContentResponse contentResponse = SuccessContentResponse.buildFromElasticJson(response.asJson(), req.getQuery());
+                                SuccessContentResponse contentResponse = SuccessContentResponse.buildFromElasticJson(response.asJson(), ireq.getQuery(), ireq.getSearchType().getName());
 //                                contentResponse = afterSearch.process(contentResponse);
                                 Logger.debug("ElasticSearchProvider: items with unique domains: " + contentResponse.getItems().size());
                                 return contentResponse;
@@ -90,32 +84,26 @@ public class ElasticSearchProvider implements SearchProvider {
                     @Override
                     public ContentResponse apply(Throwable throwable) throws Throwable {
                         Logger.error(throwable.getMessage(), throwable);
-                        return new FailedContentResponse(req.getSearchType(), throwable);
+                        return new FailedContentResponse(ireq.getSearchType().getName(), throwable);
                     }
                 });
     }
 
-    public static String getHost(SearchType type) {
-        if (type == SearchType.DOCS) {
-            return DOC_SERVER_BALANCER.getHost();
-        } else {
-            return mediaHosts.get(type);
-        }
+    public Command getCommandByName(String name) {
+        for (Command c : commands)
+            if (c.getName().endsWith(name))
+                return c;
+        return null;
+    }
+
+    public String getHost(SearchType type, SearchEngineType engine) {
+        return type.getHosts().get(engine).iterator().next();
+//        return ipBanancer.getHost();
     }
 
 
     public static void main(String[] args) throws IOException {
-        System.out.println("hi there");
-        String q = "{\n" +
-                "  \"query\": {\n" +
-                "    \"multi_match\": {\n" +
-                "      \"query\":      \"%s\",\n" +
-                "      \"fields\":     [ \"title\", \"content\" ]\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"from\": %s,\n" +
-                "  \"size\": %s\n" +
-                "}";
+
 //        String query = String.format(q, "plbvryd", 0, 20);
 //        InputStream queryStream = new ByteArrayInputStream(query.getBytes("UTF-8"));
 //        String surl = "http://localhost:9200/documents/_search?pretty";
@@ -125,7 +113,11 @@ public class ElasticSearchProvider implements SearchProvider {
 //        System.out.println(response.asJson());
 //        String url = "http://localhost:9200/linky/document";
 //        new ElasticSearchProvider().addRandomDocuments(url, 10);
-        SuccessContentResponse r = (SuccessContentResponse) new ElasticSearchProvider().doSearch(new ContentRequest("lvmcp", SearchType.DOCS, 20, 0)).get();
+        List<String> searchFields = Arrays.asList("title", "content");
+        Map<SearchEngineType, List<String>> hosts = new HashMap<>();
+        hosts.put(new SearchEngineType("elastic"), Arrays.asList("http://localhost:9200"));
+        SearchType stype = new SearchType("document", searchFields, hosts);
+        SuccessContentResponse r = (SuccessContentResponse) new ElasticSearchProvider(new SearchEngineType("elastic")).doSearch(new InternalContentRequest("lvmcp", stype, 20, 0)).get();
         System.out.println(r.getItems().size());
         for (ResponseItem item : r.getItems()) {
             System.out.println(item);

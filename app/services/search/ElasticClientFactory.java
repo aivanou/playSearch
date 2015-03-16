@@ -30,20 +30,18 @@ public class ElasticClientFactory {
 
     public static void init(Map<SearchType, List<String>> initParams) {
         clients = new HashMap<SearchType, TransportClient>();
-
-        for (SearchType contentType : SearchType.values()) {
-            Settings settings = ImmutableSettings.settingsBuilder()
-                    .put("cluster.name", CLUSTER_NAME).build();
-            TransportClient client = new TransportClient(settings);
-
-            for (final String address : initParams.get(contentType)) {
-                String ip = address.split(":")[0];
-                Integer port = Integer.parseInt(address.split(":")[1]);
-                client.addTransportAddress(new InetSocketTransportAddress(ip, port));
-            }
-
-            clients.put(contentType, client);
-
-        }
+//        for (SearchType contentType : SearchType.values()) {
+//            Settings settings = ImmutableSettings.settingsBuilder()
+//                    .put("cluster.name", CLUSTER_NAME).build();
+//            TransportClient client = new TransportClient(settings);
+//
+//            for (final String address : initParams.get(contentType)) {
+//                String ip = address.split(":")[0];
+//                Integer port = Integer.parseInt(address.split(":")[1]);
+//                client.addTransportAddress(new InetSocketTransportAddress(ip, port));
+//            }
+//
+//            clients.put(contentType, client);
+//        }
     }
 }

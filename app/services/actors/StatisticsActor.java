@@ -1,11 +1,13 @@
 package services.actors;
 
 import akka.actor.Props;
-import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 import services.actors.messages.QueryStatistics;
 import services.statistics.StatService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The actor who sends statistics to the outer service
@@ -30,11 +32,25 @@ public class StatisticsActor extends UntypedActor {
         this.sender = sender;
     }
 
+    private final List<QueryStatistics> stats = new ArrayList<>();
+    private final int MAX_BATCH = 200;
+    private volatile int currentBatch = 0;
+
     @Override
     public void onReceive(Object message) throws Exception {
-        if (message instanceof QueryStatistics) {
-            //send
-        } else if (message instanceof Terminated) {
+        if (message instanceof ActorHandler.Initial) {
+            System.out.println("Got initial message");
+        } else if (message instanceof QueryStatistics) {
+            System.out.println("received query message");
+            currentBatch++;
+            if (currentBatch >= MAX_BATCH) {
+                sender.asyncSend(new ArrayList<>(stats));
+                stats.clear();
+                currentBatch = 0;
+            }
+        } else if (message instanceof ActorHandler.Shutdown) {
+            sender.asyncSend(new ArrayList<>(stats));
+            stats.clear();
         } else {
             unhandled(message);
         }

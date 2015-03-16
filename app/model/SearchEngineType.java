@@ -5,28 +5,39 @@ package model;
  * Linky is the company developed engine,
  * Google and Bing are called through the proxies
  */
-public enum SearchEngineType {
-    GOOGLE("google"),
-    BING("bing"),
-    LINKY("linky"),
-    Unrecognised("unrecognised");
+public class SearchEngineType {
 
-    private final String id;
+    private String name;
 
-    SearchEngineType(String id) {
-        this.id = id;
+    public SearchEngineType(String name) {
+        this.name = name;
     }
 
-    public String getId() {
-        return this.id;
+    public String getName() {
+        return name;
     }
 
-    public static SearchEngineType getById(String id) {
-        for (SearchEngineType eng : SearchEngineType.values()) {
-            if (id.equals(eng.getId()))
-                return eng;
-        }
-        return SearchEngineType.Unrecognised;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SearchEngineType that = (SearchEngineType) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+
+        return true;
     }
 
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchEngineType{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

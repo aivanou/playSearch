@@ -1,31 +1,20 @@
 package services.search.provider.impl.apiutil;
 
-import model.request.SearchRequest;
+import model.request.ExternalContentRequest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * BingURLBuilderTest ...
- *
- * @author vadim
- * @date 12/14/12
- */
+
 public class BingURLBuilderTest {
 
     private URLBuilder builder = BingURLBuilder.defaultInstance();
-    private SearchRequest request = null;
+    private ExternalContentRequest request = null;
 
     @Before
     public void setUp() throws Exception {
-//        request.setQuery("test");
-//        request.setCh("UTF-8");
-//        request.setLang("th");
-//        request.setNumber(10);
-//        request.setPage(0);
-//        request.setRegion("TH");
-//        request.addSearchTypes(SearchType.DOCS);
+        request = new ExternalContentRequest("test", 10, 0, "UTF-8", "th", "TH");
     }
 
     @After

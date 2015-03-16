@@ -1,7 +1,6 @@
 package model.response;
 
 
-import model.SearchType;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -10,13 +9,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
+/**
+ * If the response from Search Provider was successful, returns this class
+ * otherwise
+ *
+ * @see model.response.FailedContentResponse
+ */
 public class SuccessContentResponse extends ContentResponse {
 
     private List<ResponseItem> items;
     private ContentResponseMetadata metadata;
 
-    public static SuccessContentResponse buildFromElasticJson(JsonNode node, String query) {
+    public static SuccessContentResponse buildFromElasticJson(JsonNode node, String query, String searchType) {
         ContentResponseMetadata metadata = ContentResponseMetadata.fromElasticJson(node, query);
         System.out.println(metadata);
         JsonNode hits = node.get("hits").get("hits");
@@ -28,22 +32,22 @@ public class SuccessContentResponse extends ContentResponse {
             ResponseItem item = ResponseItem.buildFromJson(n);
             items.add(item);
         }
-        return new SuccessContentResponse(SearchType.DOCS, items, metadata);
+        return new SuccessContentResponse(searchType, items, metadata);
     }
 
-    public SuccessContentResponse(SearchType searchType, List<ResponseItem> items, ContentResponseMetadata metadata) {
+    public SuccessContentResponse(String searchType, List<ResponseItem> items, ContentResponseMetadata metadata) {
         super(searchType);
         this.items = new ArrayList<>(items);
         this.metadata = metadata;
     }
 
-    public SuccessContentResponse(ContentResponseMetadata metadata, SearchType searchType) {
+    public SuccessContentResponse(ContentResponseMetadata metadata, String searchType) {
         super(searchType);
         this.metadata = metadata;
         this.items = new ArrayList<>();
     }
 
-    public SearchType getSearchType() {
+    public String getSearchType() {
         return searchType;
     }
 

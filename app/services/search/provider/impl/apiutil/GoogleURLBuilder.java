@@ -1,13 +1,7 @@
 package services.search.provider.impl.apiutil;
 
-import model.request.SearchRequest;
+import model.request.ExternalContentRequest;
 
-/**
- * GoogleURLBuilder ...
- *
- * @author vadim
- * @date 12/12/12
- */
 public class GoogleURLBuilder extends URLBuilder {
     public static final String DEFAULT_BASE = "https://www.googleapis.com/customsearch/v1";
     private static final GoogleURLBuilder DEFAULT_BUILDER = new GoogleURLBuilder(DEFAULT_BASE);
@@ -33,10 +27,10 @@ public class GoogleURLBuilder extends URLBuilder {
     }
 
     @Override
-    public String build(SearchRequest req) throws IllegalArgumentException {
+    public String build(ExternalContentRequest req) throws IllegalArgumentException {
         validate(req);
-        int start = start(0, req.getTotalNumber());
-        int size = size(req.getTotalNumber());
+        int start = start(0, req.getNumber());
+        int size = size(req.getNumber());
         StringBuilder sb = new StringBuilder();
         sb.append(addr).append(START).append(start).append(SIZE).append(size).append(LANG).append(req.getLang())
                 .append(REGION).append(req.getRegion()).append(QUERY)

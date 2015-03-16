@@ -12,11 +12,11 @@ import model.SearchEngineType;
 public class KeyStorage {
 
     public static String getKey(SearchEngineType provider){
-        if(provider == SearchEngineType.GOOGLE){
-            return "AIzaSyBVdMDN9aYUh0CK-qxrEco0SUl1PYMB01s 013262879079796003206:wsd3vnlscza";
-        } else if(provider == SearchEngineType.BING){
-            return "ebs3OSzZf3EmJEF3/sMvRbDRuJWCNep+5ZO8I3qnXmc=";
-        }
+//        if(provider == SearchEngineType.GOOGLE){
+//            return "AIzaSyBVdMDN9aYUh0CK-qxrEco0SUl1PYMB01s 013262879079796003206:wsd3vnlscza";
+//        } else if(provider == SearchEngineType.BING){
+//            return "ebs3OSzZf3EmJEF3/sMvRbDRuJWCNep+5ZO8I3qnXmc=";
+//        }
 
         return null;
     }

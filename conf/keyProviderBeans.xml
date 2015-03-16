@@ -80,4 +80,18 @@
     <bean id="statistics"
           class="services.statistics.impl.KafkaStatisticsService"></bean>
 
+    <bean id="elasticEngineType"
+          class="model.SearchEngineType">
+        <constructor-arg value="elastic"/>
+    </bean>
+
+    <bean id="elasticSearchProvider"
+          class="services.search.provider.impl.ElasticSearchProvider">
+        <constructor-arg ref="elasticEngineType"/>
+    </bean>
+    <bean id="actorHandler"
+          class="services.actors.ActorHandler">
+        <constructor-arg value="SearchSystem"/>
+    </bean>
+
 </beans>

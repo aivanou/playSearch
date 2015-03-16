@@ -1,13 +1,8 @@
 package services.search.provider.impl.apiutil;
 
-import model.request.SearchRequest;
+import model.request.ExternalContentRequest;
 
-/**
- * BingURLBuilder produce method to build URL for Bing API
- *
- * @author vadim
- * @date 12/12/12
- */
+
 public class BingURLBuilder extends URLBuilder {
     public static final String DEFAULT_BASE = "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/v1/Web";
     private static final BingURLBuilder DEFAULT = new BingURLBuilder(DEFAULT_BASE);
@@ -29,11 +24,11 @@ public class BingURLBuilder extends URLBuilder {
     }
 
     @Override
-    public String build(SearchRequest req) throws IllegalArgumentException {
+    public String build(ExternalContentRequest req) throws IllegalArgumentException {
         validate(req);
         String market = market(req.getLang(), req.getRegion());
-        int top = top(req.getTotalNumber());
-        int skip = skip(0, req.getTotalNumber());
+        int top = top(req.getNumber());
+        int skip = req.getFrom();
         StringBuilder sb = new StringBuilder();
         sb.append(addr).append(MARKET_ARG).append(market).append(TOP_ARG).append(top).append(SKIP_ARG)
                 .append(skip).append(QUERY_ARG).append('\'').append(req.getQuery()).append('\'');

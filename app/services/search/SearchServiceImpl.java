@@ -13,13 +13,17 @@ import services.search.provider.SearchProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
- * The search service, invokes low search API for evey @see ContentRequest
+ * The search service, invokes low level search API for evey
+ *
+ * @see model.request.ContentRequest
  * Currently, the engines are specified for the whole search, as a result
  * they are invoked for every type of content in the request
  * <p/>
- * Returns the promise of @see SearchResponse
+ * Returns the promise of
+ * @see model.response.SearchResponse
  */
 public class SearchServiceImpl implements SearchService<SearchRequest, SearchResponse> {
 
@@ -31,9 +35,15 @@ public class SearchServiceImpl implements SearchService<SearchRequest, SearchRes
 
         List<F.Promise<? extends ContentResponse>> contentPromises = new ArrayList<>();
         for (final SearchEngineType engineType : request.getSearchEngines()) {
+            Set<ContentRequest> providerRequests = request.getRequests(ProviderFactory.getProviderClass(engineType));
+            if (providerRequests == null) {
+                Logger.error("Unsupporter search engine: " + engineType);
+                continue;
+            }
 
-            for (final ContentRequest crequest : request.getContentRequests()) {
-                Logger.debug(String.format("SearchService: Searching %s on %s content type: %s", request.getQuery(), engineType.getId(), crequest.getSearchType().getName()));
+            for (final ContentRequest crequest : providerRequests) {
+                Logger.debug(String.format("SearchService: Searching %s on %s",
+                        request.getQuery(), engineType.getName()));
                 final SearchProvider provider = ProviderFactory.getProvider(engineType);
                 F.Promise<ContentResponse> contentPromise = provider.doSearch(crequest);
                 contentPromises.add(contentPromise);

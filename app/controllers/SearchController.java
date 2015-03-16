@@ -23,8 +23,14 @@ import services.search.SearchServiceFactory;
 
 import javax.validation.ValidationException;
 
-
-public class Application extends Controller {
+/**
+ * Represents the search entry point
+ * Request is the HTTP Post with json body
+ * Translates the json into @see model.input.InputDTO and builds a @see model.request.SearchRequest from it
+ *
+ * @see model.request.SearchRequest is used by @see services.search.SearchService
+ */
+public class SearchController extends Controller {
 
     private final static SearchService service = SearchServiceFactory.getInstance();
     private final static Cache cache = CacheFactory.getInstance().getCache();

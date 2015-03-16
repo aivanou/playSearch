@@ -9,7 +9,7 @@ import java.util.*;
 public class DefaultResponseShuffler implements IResponseShuffler {
     @Override
     public Collection<ResponseItem> shuffle(Collection<SearchResponse> input) {
-        Map<SearchType, Iterator<ResponseItem>> itMap = new EnumMap<SearchType, Iterator<ResponseItem>>(SearchType.class);
+//        Map<SearchType, Iterator<ResponseItem>> itMap = new EnumMap<SearchType, Iterator<ResponseItem>>(SearchType.class);
 
 //        for (SearchResponse item : input) {
 //            if (item.getItems().iterator() != null && item.getItems().iterator().hasNext()) {
@@ -23,29 +23,29 @@ public class DefaultResponseShuffler implements IResponseShuffler {
 //            }
 //        }
 
-        Collection<ResponseItem> shuffledItems = new ArrayList<ResponseItem>();
-        int curr_priority = 1;
-        int faults = 0;
-        while (true) {
-            SearchType curr_type = SearchType.getByName("name");
-            Iterator<ResponseItem> itemIt = itMap.get(curr_type);
-            if (itemIt == null || !itemIt.hasNext()) {
-                curr_priority = this.changePriority(curr_priority);
-                faults += 1;
-                if (faults == SearchType.values().length) {
-                    break;
-                }
-                continue;
-            }
-            faults = 0;
-            if (curr_priority == 1) {
-                this.addItem(curr_type, itemIt, shuffledItems, 2);
-            } else {
-                this.addItem(curr_type, itemIt, shuffledItems, 1);
-            }
-            curr_priority = this.changePriority(curr_priority);
-        }
-        return shuffledItems;
+//        Collection<ResponseItem> shuffledItems = new ArrayList<ResponseItem>();
+//        int curr_priority = 1;
+//        int faults = 0;
+//        while (true) {
+//            SearchType curr_type = SearchType.getByName("name");
+//            Iterator<ResponseItem> itemIt = itMap.get(curr_type);
+//            if (itemIt == null || !itemIt.hasNext()) {
+//                curr_priority = this.changePriority(curr_priority);
+//                faults += 1;
+//                if (faults == SearchType.values().length) {
+//                    break;
+//                }
+//                continue;
+//            }
+//            faults = 0;
+//            if (curr_priority == 1) {
+//                this.addItem(curr_type, itemIt, shuffledItems, 2);
+//            } else {
+//                this.addItem(curr_type, itemIt, shuffledItems, 1);
+//            }
+//            curr_priority = this.changePriority(curr_priority);
+//        }
+        return null;
     }
 
     private int changePriority(int pr) {

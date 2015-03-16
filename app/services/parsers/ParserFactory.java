@@ -8,11 +8,8 @@ public class ParserFactory {
     }
 
     public static ParserSE newInstance(SearchEngineType engine) throws Exception {
-        if (engine == SearchEngineType.BING) {
-            return new ParserSEBing();
-        } else if (engine == SearchEngineType.GOOGLE) {
+        if (engine.equals("google"))
             return new ParserSEGoogle();
-        }
-        throw new Exception("Parser not found for " + engine);
+        return new ParserSEBing();
     }
 }

@@ -3,7 +3,6 @@ package services.entities.Impl;
 import datasources.dao.entities.EntitiesDAO;
 import datasources.dao.entities.impl.CatalogElasticSearchDAOImpl;
 import model.Schema;
-import model.SearchType;
 import model.input.Catalog;
 import play.Logger;
 import play.Play;
@@ -11,7 +10,7 @@ import play.libs.Json;
 
 public class CatalogServiceImpl extends EntitiesServiceImpl<Catalog> {
 
-    private final String url = Play.application().configuration().getString("elastic.catalog") + "/" + Schema.ELASTIC_SCHEMA + "/" + SearchType.CATALOG.toString();
+    private final String url = Play.application().configuration().getString("elastic.catalog") + "/" + Schema.ELASTIC_SCHEMA + "/catalog";
 
     public CatalogServiceImpl() {
         super(new CatalogElasticSearchDAOImpl());

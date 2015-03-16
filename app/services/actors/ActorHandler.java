@@ -1,12 +1,13 @@
 package services.actors;
 
-import akka.actor.*;
-import scala.concurrent.duration.Duration;
-import services.actors.messages.QueryStatistics;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.UntypedActor;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * The initial point of actor system
@@ -22,46 +23,82 @@ public class ActorHandler {
     public static class Shutdown {
     }
 
-    public static ActorHandler getInstance(String name) {
-        return new ActorHandler(name);
+    private static ActorHandler instance = null;
+
+    public static void configure(String name) {
+        if (instance == null)
+            instance = new ActorHandler(name);
     }
 
-    private final Set<String> registeredActors = new ConcurrentSkipListSet<>();
+    public static ActorHandler getInstance() {
+        if (instance == null) {
+            throw new AssertionError("actor system has no available instances, call configure first");
+        }
+        return instance;
+    }
+
+    private final Map<Class<? extends UntypedActor>, String> registeredActors = new HashMap<>();
+    private final ReentrantLock lock = new ReentrantLock();
+    private final String name;
 
     private final ActorSystem system;
 
     private final String USER_ACTOR_PATH;
 
     private ActorHandler(String name) {
+        this.name = name;
         system = ActorSystem.create(name);
         USER_ACTOR_PATH = String.format("akka://%s/user", name);
     }
 
-    public void registerActor(String path, Props props) {
-        system.actorOf(props, path);
-        registeredActors.add(path);
-    }
-
-    public <T extends UntypedActor> void registerActor(String path, Class<T> actorClass) {
-        system.actorOf(Props.apply(actorClass), path);
-        registeredActors.add(path);
-    }
-
-    public <T> void sendMessage(String path, T message) {
-        if (!registeredActors.contains(path)) {
-            //throw exception?
+    public <T extends UntypedActor> void registerActor(Class<T> clazz, Props props) {
+        ActorRef actor = null;
+        lock.lock();
+        try {
+            if (registeredActors.containsKey(clazz))
+                return;
+            String path = clazz.getName();
+            System.out.println("Registering actor on path: " + path);
+            actor = system.actorOf(props, path);
+            registeredActors.put(clazz, path);
+        } finally {
+            lock.unlock();
         }
-        system.actorFor(String.format("%s/%s", USER_ACTOR_PATH, path)).tell(message);
+        if (actor != null) {
+            actor.tell(new Initial());
+        }
     }
 
-    public void sendMessage() {
-        ActorRef a = system.actorFor("akka://SearchActorSystem/user/statistics");
-        a.tell(QueryStatistics.fromSearchRequest("lalala"));
-        akka.pattern.Patterns.gracefulStop(a, Duration.create(1, TimeUnit.SECONDS), system);
+    public <T extends UntypedActor> void registerActor(Class<T> actorClass) {
+        registerActor(actorClass, Props.apply(actorClass));
     }
+
+    public <T, K extends UntypedActor> void sendMessage(Class<K> clazz, T message) {
+        lock.lock();
+        try {
+            if (!registeredActors.containsKey(clazz)) {
+                //throw exception?
+                return;
+            }
+        } finally {
+            lock.unlock();
+        }
+        system.actorFor(String.format("%s/%s", USER_ACTOR_PATH, registeredActors.get(clazz))).tell(message);
+    }
+
+// akka.pattern.Patterns.gracefulStop(a, Duration.create(1, TimeUnit.SECONDS), system);
 
     public void storActors() {
-        system.actorFor("akka://SearchActorSystem/user/statistics").tell(PoisonPill.getInstance());
+        lock.lock();
+        try {
+            for (String path : registeredActors.values()) {
+                system.actorFor(String.format("%s/%s", USER_ACTOR_PATH, path)).tell(new Shutdown());
+                //TODO: set a timeout for waiting before shutting down
+                system.shutdown();
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static void main(String[] args) {

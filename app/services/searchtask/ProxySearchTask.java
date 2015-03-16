@@ -12,9 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
-/**
- * @author egor, Date: 12/21/12
- */
+
 public class ProxySearchTask extends SearchTask {
     private static final int PROXY_PORT = 8888;
     private static final ProxyServer.Protocol PROXY_PROTOCOL = ProxyServer.Protocol.HTTP;

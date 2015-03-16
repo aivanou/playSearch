@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-/**
- * @author egor, Date: 12/21/12
- */
+
 public abstract class SearchTask {
     protected static final String METHOD = "GET";
     private int timeout;
@@ -47,12 +45,12 @@ public abstract class SearchTask {
     /**
      * Decompress gzipped response into plain string if needed
      */
-    public static String decompress(java.io.InputStream is){
+    public static String decompress(java.io.InputStream is) {
         String content = "";
         try {
             GZIPInputStream gzis = new GZIPInputStream(is);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            for (int value = 0; value != -1;) {
+            for (int value = 0; value != -1; ) {
                 value = gzis.read();
                 if (value != -1) {
                     baos.write(value);

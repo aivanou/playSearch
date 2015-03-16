@@ -1,15 +1,19 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 public class SearchType {
 
     private String name;
     private List<String> searchFields;
+    private Map<SearchEngineType, List<String>> hosts;
 
-    public SearchType(String name, List<String> searchFields) {
+
+    public SearchType(String name, List<String> searchFields, Map<SearchEngineType, List<String>> hosts) {
         this.name = name;
         this.searchFields = searchFields;
+        this.hosts = hosts;
     }
 
     public String getName() {
@@ -18,6 +22,10 @@ public class SearchType {
 
     public List<String> getSearchFields() {
         return searchFields;
+    }
+
+    public Map<SearchEngineType, List<String>> getHosts() {
+        return hosts;
     }
 
     @Override
@@ -42,6 +50,7 @@ public class SearchType {
         return "SearchType{" +
                 "name='" + name + '\'' +
                 ", searchFields=" + searchFields +
+                ", hosts=" + hosts +
                 '}';
     }
 }
