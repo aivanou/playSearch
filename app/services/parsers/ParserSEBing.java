@@ -12,8 +12,10 @@ import org.jsoup.select.Elements;
 
 import java.net.MalformedURLException;
 
+
 /**
- * @author alex
+ * Used by @see services.search.provider.impl.BingApiSearchProvider
+ * to parse the response
  */
 public class ParserSEBing extends ParserSE {
 

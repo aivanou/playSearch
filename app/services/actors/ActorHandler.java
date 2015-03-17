@@ -86,8 +86,6 @@ public class ActorHandler {
         system.actorFor(String.format("%s/%s", USER_ACTOR_PATH, registeredActors.get(clazz))).tell(message);
     }
 
-// akka.pattern.Patterns.gracefulStop(a, Duration.create(1, TimeUnit.SECONDS), system);
-
     public void storActors() {
         lock.lock();
         try {

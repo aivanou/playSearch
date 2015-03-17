@@ -14,9 +14,15 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.UUID;
 
-public class KafkaStatisticsService<T extends Writable> implements StatService<T> {
+/**
+ * Simple query message producer, writes query messages to the apache kafka log system
+ * Currently used with @see services.actors.messages.QueryStatistics
+ *
+ * @param <T>
+ */
+public class KafkaWriterService<T extends Writable> implements StatService<T> {
 
-    public KafkaStatisticsService() {
+    public KafkaWriterService() {
         configure();
     }
 
@@ -25,17 +31,20 @@ public class KafkaStatisticsService<T extends Writable> implements StatService<T
     private String topic = Play.application().configuration().getString("statistics.kafka.topic", "statistics");
 
     private void configure() {
-//        Properties props = new Properties();
+        //Todo: move properties to the configuration file
+        Properties props = new Properties();
+        //todo: properly set apache kafka host
 //        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Play.application().configuration().getString("statistics.kafka.servers", "localhost"));
-//        props.put(ProducerConfig.RETRIES_CONFIG, Play.application().configuration().getString("statistics.kafka.servers", "localhost"));
-//        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, Play.application().configuration().getString("statistics.kafka.compression.type", "none"));
-//        props.put(ProducerConfig.BATCH_SIZE_CONFIG, Play.application().configuration().getString("statistics.kafka.batch", "200"));
-//        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-//        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
-//
-//        producer = new KafkaProducer<>(props);
+        props.put(ProducerConfig.RETRIES_CONFIG, Play.application().configuration().getInt("statistics.kafka.retries", 3));
+        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, Play.application().configuration().getString("statistics.kafka.compression.type", "none"));
+        props.put(ProducerConfig.BATCH_SIZE_CONFIG, Play.application().configuration().getInt("statistics.kafka.batch", 200));
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+
+        producer = new KafkaProducer<>(props);
     }
 
+    //TODO add appropriate logging
     @Override
     public void send(Collection<T> objects) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

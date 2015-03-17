@@ -40,7 +40,7 @@ public final class GoogleApiSearchProvider extends ApiSearchProvider implements 
 
     @Override
     public F.Promise<ContentResponse> doSearch(final ContentRequest req) throws IllegalArgumentException, ClassCastException {
-        if (req instanceof ExternalContentRequest)
+        if (!(req instanceof ExternalContentRequest))
             throw new ClassCastException("Bing supports only external content requests");
         ExternalContentRequest ereq = (ExternalContentRequest) req;
 

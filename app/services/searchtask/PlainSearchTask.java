@@ -11,6 +11,11 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 
 
+/**
+ * Was used with the requests to the google/bing through api keys
+ * currently there is no possibility to do this
+ */
+@Deprecated
 public class PlainSearchTask extends SearchTask {
     private String query;
     private String requestURL;

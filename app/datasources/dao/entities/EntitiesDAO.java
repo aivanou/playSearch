@@ -13,8 +13,8 @@ public interface EntitiesDAO<T> {
 
     F.Promise<EntityResponse<String>> insert(String url, InputStream bodyStream);
 
-    F.Promise<EntityResponse<String>> delete(String id);
+    F.Promise<EntityResponse<String>> delete(String url);
 
-    F.Promise<EntityResponse<T>> get(String id);
+    F.Promise<EntityResponse<T>> get(String url);
 
 }

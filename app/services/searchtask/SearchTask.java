@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 
+/**
+ * @see services.searchtask.PlainSearchTask
+ */
+@Deprecated
 public abstract class SearchTask {
     protected static final String METHOD = "GET";
     private int timeout;

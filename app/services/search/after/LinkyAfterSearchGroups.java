@@ -15,7 +15,7 @@ public class LinkyAfterSearchGroups implements AfterSearch {
      * remains items only with the unique domains
      * applicable only to SearchType.DOCS
      * changes items in @param searchResponse
-     * if item does not have a domain field, gets domain from item.getURL()
+     * if item does not have a domain field, gets domain from item.getId()
      * <p/>
      * maybe it should be threadSafe?
      */
@@ -29,9 +29,9 @@ public class LinkyAfterSearchGroups implements AfterSearch {
 //        for (ResponseItem item : searchResponse.getItems()) {
 //            String domain;
 //            try {
-//                domain = item.getParams().containsKey("domain") ? item.getParams().get("domain") : getHost(item.getUrl());
+//                domain = item.getParams().containsKey("domain") ? item.getParams().get("domain") : getHost(item.getId());
 //            } catch (MalformedURLException e) {
-//                Logger.error("LinkyAfterSearchGroups: Cannot get domain from url:   " + item.getUrl());
+//                Logger.error("LinkyAfterSearchGroups: Cannot get domain from url:   " + item.getId());
 //                continue;
 //            }
 //            if (!containsDomain(rItems, domain)) {

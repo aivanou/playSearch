@@ -5,6 +5,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Spring shell
+ */
 public final class SpringContextLoader {
 
     private static final Map<String, ClassPathXmlApplicationContext> contexts = new ConcurrentHashMap<>();

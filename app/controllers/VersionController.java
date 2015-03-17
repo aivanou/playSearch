@@ -9,6 +9,7 @@ import play.mvc.Results;
 
 public class VersionController extends Controller {
     private static String version;
+
     static {
         try {
             version = ConfigFactory.load("version.properties").getString("version");
@@ -18,6 +19,6 @@ public class VersionController extends Controller {
     }
 
     public static Result getVersion() {
-        return Results.ok(version != null ? version : "Can't detect version because version.properties wasn't found.");
+        return Results.ok(version != null ? version : "Cannot detect version because version.properties was not found.");
     }
 }

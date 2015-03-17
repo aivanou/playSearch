@@ -21,8 +21,8 @@ public class CatalogServiceImpl extends EntitiesServiceImpl<Catalog> {
     }
 
     @Override
-    protected String getURL(String id) {
-        Logger.info("using url: " + url + "/" + id);
+    protected String getUrl(String id) {
+        Logger.info("using id: " + url + "/" + id);
         return url + "/" + id;
     }
 

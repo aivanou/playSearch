@@ -13,6 +13,10 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 
 
+/**
+ * Was used with the requests to the google/bing through proxy servers
+ */
+@Deprecated
 public class ProxySearchTask extends SearchTask {
     private static final int PROXY_PORT = 8888;
     private static final ProxyServer.Protocol PROXY_PROTOCOL = ProxyServer.Protocol.HTTP;

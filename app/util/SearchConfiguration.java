@@ -6,7 +6,6 @@ import model.commands.Command;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import play.Logger;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -40,7 +39,6 @@ public class SearchConfiguration {
             throw new IOException(e);
         }
         String json = new String(encoded, Charset.defaultCharset());
-        Logger.debug("Search configuration: " + json);
         return SearchConfiguration.build(json);
     }
 

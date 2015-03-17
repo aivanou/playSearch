@@ -1,11 +1,13 @@
 package model;
 
-//Solr/ElasticSearch fields should be match with these constants
+/**
+ * Hard coded index name and general fields
+ */
+//Todo place it to the configuration file
 public interface Schema {
 
     String ELASTIC_SCHEMA = "linky";
 
-    //general fields
     String TITLE = "title";
     String URL = "url";
     String CONTENT = "content";

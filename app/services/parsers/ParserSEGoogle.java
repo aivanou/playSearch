@@ -8,14 +8,12 @@ import org.jsoup.select.Elements;
 
 import java.net.MalformedURLException;
 
+
 /**
- * ParserSEGoogle ...
- *
- * @author Alexander Latysh
- * @version 1.0.0
- * @date Nov 14, 2012
- * @email <alatysh@linky.asia>
+ * Used by @see services.search.provider.impl.GoogleApiSearchProvider
+ * to parse the response
  */
+
 public class ParserSEGoogle extends ParserSE {
 
     private static final String PARAM_BEFORE_URL = "url?q=";

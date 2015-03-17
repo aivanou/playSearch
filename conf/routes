@@ -10,8 +10,8 @@ GET           /version             controllers.VersionController.getVersion()
 #ok-catalog
 
 POST          /catalog             controllers.CatalogController.insertCatalog()
-GET           /catalog/:url        controllers.CatalogController.getCatalog(url:String)
-DELETE        /catalog/:url        controllers.CatalogController.deleteCatalog(url:String)
+GET           /catalog/:id        controllers.CatalogController.getCatalog(id:String)
+DELETE        /catalog/:id        controllers.CatalogController.deleteCatalog(id:String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file        controllers.Assets.at(path="/public", file)

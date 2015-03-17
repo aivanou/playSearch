@@ -3,6 +3,13 @@ package model;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The request contains several search types, that are specified in the query.json config file
+ * Every type has its own set of hosts and search fields
+ * <p/>
+ * For example: the web documets index can be situated at several hosts and
+ * can be consisted of several searchable fields
+ */
 public class SearchType {
 
     private String name;

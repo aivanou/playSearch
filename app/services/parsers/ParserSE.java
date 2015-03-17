@@ -12,14 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- *
- *
- * @author Alexander Latysh
- * @version 1.0.0
- * @date Nov 14, 2012
- * @email <alatysh@linky.asia>
- */
+
 public abstract class ParserSE {
     /**
      * Parsing result of search engine's response
@@ -36,7 +29,7 @@ public abstract class ParserSE {
      * Otherwise, writes a message to log with the Search Engine name and query, for which was obtained an incomplete search results,
      * and returns empty list.
      *
-     * @param html to parse
+     * @param html  to parse
      * @param query that obtained the search engine result page
      * @return @return null, if some error occurs while parsing; empty collection if no
      * result was found or number of results less than 10; results otherwise
@@ -59,7 +52,7 @@ public abstract class ParserSE {
                     getLogger().warn(String.format("%s didn't return results for query {%s}", getSearchEngineName(), query));
                     logQuery(query);
                 }
-                return Collections.<ResponseItem> emptyList();
+                return Collections.<ResponseItem>emptyList();
             } else { //This is a case at which Search Engine returned any other page instead of SERP.
                 getLogger().warn(String.format("%s didn't return any results", getSearchEngineName()));
                 logQuery(query);
@@ -69,7 +62,7 @@ public abstract class ParserSE {
         //Here I check whether the number of results exceed or equals 10. Otherwise, I return an empty list.
         if (!isEnoughResults(statistic)) {
             getLogger().warn(String.format("%s returned not enough results for query {%s}", getSearchEngineName(), query));
-            return Collections.<ResponseItem> emptyList();
+            return Collections.<ResponseItem>emptyList();
         }
         //Here I find element that contains entry SERP (the listing of results returned by a search engine in response to a query)
         Element SERP = getSERP(doc);
@@ -147,11 +140,11 @@ public abstract class ParserSE {
     protected abstract Logger getLogger();
 
     /**
-    * Check whether number of results from Search Engine exceed or equals 10.
-    *
-    * @param element with statistic about search results
-    * @return true if the the number of results exceeds or equals 10 and false otherwise..
-    */
+     * Check whether number of results from Search Engine exceed or equals 10.
+     *
+     * @param element with statistic about search results
+     * @return true if the the number of results exceeds or equals 10 and false otherwise..
+     */
     protected boolean isEnoughResults(Element element) {
         int count = 0;
         //Here I check whether block-element is not empty

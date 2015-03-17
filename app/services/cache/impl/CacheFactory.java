@@ -8,6 +8,7 @@ public class CacheFactory {
 
     private static CacheFactory instance = null;
 
+    //Todo read cache configuration from play configuration class
     public static void configure(play.Configuration conf, ExecutionContext context) {
         if (instance == null) {
             instance = new CacheFactory(context);
@@ -21,6 +22,7 @@ public class CacheFactory {
     private Cache cache;
 
     private CacheFactory(ExecutionContext context) {
+        //Todo move to the play configuration
         JedisPoolConfig pool = new JedisPoolConfig();
         String host = "localhost";
         int port = 6379;

@@ -25,7 +25,6 @@ import java.util.Set;
  * @see services.search.provider.impl.ElasticSearchProvider
  * <p/>
  * The External providers were turned off due to lack of resources to run them(API key and proxies)
- *
  * @see model.input.InputDTO uses it to build the request
  */
 public class SearchRequest {

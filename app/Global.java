@@ -21,8 +21,10 @@ public class Global extends GlobalSettings {
             //TODO stop the app
         }
         CacheFactory.configure(app.configuration(), Akka.system().dispatcher().prepare());
+        //Todo replace this to factory call
         ActorHandler.configure("ActorSystem");
         ActorHandler.getInstance().registerActor(StatisticsActor.class, StatisticsActor.props(new FakeStatisticsService<QueryStatistics>()));
+        //TODO for testing purposes, delete in production
         ActorHandler.getInstance().sendMessage(StatisticsActor.class, new QueryStatistics(System.nanoTime(), "dummy query"));
         Logger.info("Application start...");
     }

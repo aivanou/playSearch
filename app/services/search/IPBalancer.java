@@ -12,6 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @param <T>
  */
 // TODO: keep track of the dead hosts, if dead host alive again, put back in the queue
+// TODO: integrate to the search system, probably in SearchService
 public class IPBalancer<T> {
     private final Queue<T> ipHolder;
 

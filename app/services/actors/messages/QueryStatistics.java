@@ -12,7 +12,8 @@ import java.io.Serializable;
  */
 public class QueryStatistics implements Serializable, Writable {
 
-    //TODO: add id
+    private static final long serialVersionUID = 1546471298812756147L;
+
 
     public static QueryStatistics fromSearchRequest(String json) {
         return new QueryStatistics(System.nanoTime(), json);

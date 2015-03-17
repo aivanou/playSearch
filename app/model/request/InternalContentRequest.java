@@ -5,6 +5,10 @@ import model.SearchType;
 import model.input.ContentDTO;
 import util.SearchConfiguration;
 
+/**
+ * Represents the internal search request
+ * Currently supports @see services.search.provider.impl.ElasticSearchProvider
+ */
 public class InternalContentRequest extends ContentRequest {
 
     private SearchType searchType;

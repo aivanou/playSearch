@@ -1,9 +1,10 @@
 package model;
 
 /**
- * The search engine types,
- * Linky is the company developed engine,
- * Google and Bing are called through the proxies
+ * Represents engines to which the requests will be made
+ * Currently suprorted: [elastic, google, bing]
+ * The elastic is the @see model.request.InternalContentRequest type
+ * and [google, bing] are @see model.request.ExternalContentRequest
  */
 public class SearchEngineType {
 

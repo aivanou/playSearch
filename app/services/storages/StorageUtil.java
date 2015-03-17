@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see services.storages.keystorage.KeyStorage
+ */
+@Deprecated
 public class StorageUtil {
 
     public static List<String> loadFromFile(java.io.InputStream is) {
@@ -15,14 +19,14 @@ public class StorageUtil {
             br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line;
             while ((line = br.readLine()) != null) {
-                if(!line.isEmpty()) {
+                if (!line.isEmpty()) {
                     entities.add(line);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(br != null) {
+            if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {

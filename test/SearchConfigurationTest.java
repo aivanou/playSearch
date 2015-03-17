@@ -1,17 +1,15 @@
 import org.junit.Test;
 
-import java.io.File;
-
-import static org.junit.Assert.fail;
-
+//TODO write configuration tests
 public class SearchConfigurationTest {
 
     @Test
     public void fileExistsTest() {
-        String file = "~/conf/query.json";
-        if (!new File(file).exists()) {
-            fail("Configuration File does not exists: " + file);
-        }
+    }
+
+    @Test
+    public void configurationReaderTest() {
+        String filename = "~/conf/query.json";
     }
 
 }

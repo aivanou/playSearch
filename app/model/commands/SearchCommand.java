@@ -9,6 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The search command, used by
+ * <p/>
+ * Currently used by @see services.search.provider.impl.ElasticSearchProvider
+ */
 public class SearchCommand extends Command {
     public SearchCommand(String name, JSONObject command) {
         super(name, command);

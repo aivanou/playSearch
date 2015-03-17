@@ -10,7 +10,7 @@ import services.entities.Impl.EntityResponse;
  */
 public interface EntitiesService<T> {
 
-    F.Promise<EntityResponse<String>> insert(T entity, String id);
+    F.Promise<EntityResponse<String>> insert(T entity, String url);
 
     F.Promise<EntityResponse<String>> delete(String url);
 

@@ -1,5 +1,13 @@
 package services.entities.Impl;
 
+/**
+ * The response fro the @see datasources.dao.entities.EntitiesDAO
+ * Aggregates two type of messages: Success message and Error message
+ * if the request was successful the message will be set and error will be null
+ * otherwise the error will have a value of Exception and message will be null
+ *
+ * @param <T>
+ */
 public class EntityResponse<T> {
 
     private T message;

@@ -65,7 +65,7 @@ public class SearchController extends Controller {
             @Override
             public void onSuccess(String result) throws Throwable {
                 Logger.debug("Invoking cache success with : " + result);
-                if (result != null) {
+                if (result != null) { //if cache doesn't have an object it will return null
                     promise.success(ok(result));
                 } else {
                     executeRequest(request, promise);
@@ -98,16 +98,22 @@ public class SearchController extends Controller {
         searchResponsePromise.onRedeem(new F.Callback<SearchResponse>() {
             @Override
             public void invoke(SearchResponse searchResponse) throws Throwable {
-                String json = searchResponse.toJson();
-                //30 -- TTL of the cached object
-                cache.set(request.getQuery(), json, 30).onFailure(new OnFailure() {
-                    @Override
-                    public void onFailure(Throwable failure) throws Throwable {
-                        Logger.debug("Error while writing data in cache: " + failure.getMessage());
-                    }
-                }, Akka.system().dispatcher().prepare());
-                Logger.debug("Application: Setting response as: " + json);
-                resultPromise.success(ok(json));
+                if (searchResponse == null) {
+                    resultPromise.success(badRequest("Internal server error, please contat administrator if possible"));
+                } else {
+                    String json = searchResponse.toJson();
+                    //TODO move to the play configuration file
+                    //30 -- cached object TTL in seconds
+                    cache.set(request.getQuery(), json, 30).onFailure(new OnFailure() {
+                        @Override
+                        public void onFailure(Throwable failure) throws Throwable {
+                            Logger.debug("Error while writing data in cache: " + failure.getMessage());
+                        }
+                    }, Akka.system().dispatcher().prepare());
+                    if (Logger.isDebugEnabled())
+                        Logger.debug("Application: Setting response as: " + json);
+                    resultPromise.success(ok(json));
+                }
             }
         });
     }

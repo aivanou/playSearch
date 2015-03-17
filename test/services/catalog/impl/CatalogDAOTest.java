@@ -21,8 +21,8 @@ public class CatalogDAOTest {
             public void run() {
                 EntitiesDAO<Catalog> catalogDAO = Mockito.mock(CatalogElasticSearchDAOImpl.class);
                 EntitiesService<Catalog> catalogService = new CatalogServiceImpl(catalogDAO);
-                Catalog c = new Catalog("someurl.com", "very very very long description", "some english title");
-                catalogService.insert(c, "someId.com");
+                Catalog c = new Catalog("testid", "very very very long description", "some english title");
+                catalogService.insert(c, "testid");
                 Mockito.verify(catalogDAO, Mockito.only()).insert(Mockito.anyString(), Mockito.any(InputStream.class));
             }
         });
@@ -34,7 +34,7 @@ public class CatalogDAOTest {
             public void run() {
                 EntitiesDAO<Catalog> catalogDAO = Mockito.mock(CatalogElasticSearchDAOImpl.class);
                 EntitiesService<Catalog> catalogService = new CatalogServiceImpl(catalogDAO);
-                String url = "someurl.com";
+                String url = "testid";
                 catalogService.get(url);
                 Mockito.verify(catalogDAO, Mockito.only()).get(Mockito.anyString());
             }
@@ -47,7 +47,7 @@ public class CatalogDAOTest {
             public void run() {
                 EntitiesDAO<Catalog> catalogDAO = Mockito.mock(CatalogElasticSearchDAOImpl.class);
                 EntitiesService<Catalog> catalogService = new CatalogServiceImpl(catalogDAO);
-                String url = "someurl.com";
+                String url = "testid";
                 catalogService.delete(url);
                 Mockito.verify(catalogDAO, Mockito.only()).delete(Mockito.anyString());
             }

@@ -25,6 +25,7 @@ import java.util.Set;
  * Returns the promise of
  * @see model.response.SearchResponse
  */
+//TODO specify callback before and after search for every content request and every search engine
 public class SearchServiceImpl implements SearchService<SearchRequest, SearchResponse> {
 
     public SearchServiceImpl() {
@@ -55,8 +56,10 @@ public class SearchServiceImpl implements SearchService<SearchRequest, SearchRes
         return seq.map(new F.Function<List<ContentResponse>, SearchResponse>() {
             @Override
             public SearchResponse apply(List<ContentResponse> contentResponses) throws Throwable {
+                //TODO specify proper metadata for the whole search response
                 SearchResponseMetadata metadata = new SearchResponseMetadata(1, 1, 1);
-                Logger.debug(String.format("SearchService: combining %s responses", contentResponses.size()));
+                if (Logger.isDebugEnabled())
+                    Logger.debug(String.format("SearchService: combining %s responses", contentResponses.size()));
                 SearchResponse response = new SearchResponse(contentResponses, metadata);
                 return response;
             }

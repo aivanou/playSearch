@@ -4,7 +4,6 @@ import model.Jsonable;
 import model.Schema;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import services.util.ToString;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -134,7 +133,15 @@ public class ResponseItem implements Comparable<ResponseItem>, Comparator<Respon
 
     @Override
     public String toString() {
-        return new ToString(this).add("score", score).add("url", url).add("type", type).toString();
+        return "ResponseItem{" +
+                "url='" + url + '\'' +
+                ", title='" + title + '\'' +
+                ", snippet='" + snippet + '\'' +
+                ", type='" + type + '\'' +
+                ", score=" + score +
+                ", indexed=" + indexed +
+                ", params=" + params +
+                '}';
     }
 
     @Override

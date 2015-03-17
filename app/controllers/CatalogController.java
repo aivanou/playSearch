@@ -29,11 +29,11 @@ public class CatalogController extends Controller {
         }
     }
 
-    public static Result getCatalog(final String url) {
+    public static Result getCatalog(final String id) {
         if (catalogService == null) {
             return internalServerError("initialization exception. please contact with administrator");
         }
-        F.Promise<EntityResponse<Catalog>> pr = catalogService.get(url);
+        F.Promise<EntityResponse<Catalog>> pr = catalogService.get(id);
         return async(
                 pr.map(
                         new F.Function<EntityResponse<Catalog>, Result>() {
@@ -63,7 +63,7 @@ public class CatalogController extends Controller {
         } catch (RuntimeException ex) {
             return badRequest("Request error: request body: " + request().body().asJson().toString());
         }
-        F.Promise<EntityResponse<String>> pr = catalogService.insert(catalog, catalog.getUrl());
+        F.Promise<EntityResponse<String>> pr = catalogService.insert(catalog, catalog.getId());
         return async(
                 pr.map(
                         new F.Function<EntityResponse<String>, Result>() {
@@ -79,11 +79,11 @@ public class CatalogController extends Controller {
         );
     }
 
-    public static Result deleteCatalog(String url) {
+    public static Result deleteCatalog(String id) {
         if (catalogService == null) {
             return internalServerError("initialization exception. please contact with administrator");
         }
-        F.Promise<EntityResponse<String>> pr = catalogService.delete(url);
+        F.Promise<EntityResponse<String>> pr = catalogService.delete(id);
         return async(
                 pr.map(
                         new F.Function<EntityResponse<String>, Result>() {

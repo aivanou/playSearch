@@ -6,6 +6,11 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The command that internal search engines can execute
+ * Currently, for catalogs there is another way
+ * @see datasources.dao.entities.EntitiesDAO
+ */
 public abstract class Command {
 
     private String name;

@@ -36,7 +36,7 @@ public final class BingApiSearchProvider extends ApiSearchProvider {
 
     @Override
     public F.Promise<ContentResponse> doSearch(final ContentRequest req) throws IllegalArgumentException, ClassCastException {
-        if (req instanceof ExternalContentRequest)
+        if (!(req instanceof ExternalContentRequest))
             throw new ClassCastException("Bing supports only external content requests");
         ExternalContentRequest ereq = (ExternalContentRequest) req;
         Logger.debug(String.format("Bing API accepted: %s", ereq));
