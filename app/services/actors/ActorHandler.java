@@ -86,7 +86,7 @@ public class ActorHandler {
         system.actorFor(String.format("%s/%s", USER_ACTOR_PATH, registeredActors.get(clazz))).tell(message);
     }
 
-    public void storActors() {
+    public void storeActors() {
         lock.lock();
         try {
             for (String path : registeredActors.values()) {
@@ -98,9 +98,4 @@ public class ActorHandler {
             lock.unlock();
         }
     }
-
-    public static void main(String[] args) {
-        System.out.println("hi");
-    }
-
 }

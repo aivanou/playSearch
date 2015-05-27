@@ -9,6 +9,8 @@ import java.util.Map;
  * <p/>
  * For example: the web documets index can be situated at several hosts and
  * can be consisted of several searchable fields
+ * <p/>
+ * The constructor's parameter host does not copy a collection, so it is vulnerable to external change.
  */
 public class SearchType {
 
@@ -16,7 +18,7 @@ public class SearchType {
     private List<String> searchFields;
     private Map<SearchEngineType, List<String>> hosts;
 
-
+    //TODO: collection hosts is vulnerable to external change, copy the map instead of siply saving the reference
     public SearchType(String name, List<String> searchFields, Map<SearchEngineType, List<String>> hosts) {
         this.name = name;
         this.searchFields = searchFields;
@@ -27,10 +29,12 @@ public class SearchType {
         return name;
     }
 
+    //TODO: return the copy of the list instead
     public List<String> getSearchFields() {
         return searchFields;
     }
 
+    //TODO: return the copy of the map instead, othervise it is vulnerable to external change
     public Map<SearchEngineType, List<String>> getHosts() {
         return hosts;
     }

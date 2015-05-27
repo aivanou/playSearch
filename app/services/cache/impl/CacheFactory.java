@@ -7,11 +7,16 @@ import services.cache.Cache;
 public class CacheFactory {
 
     private static CacheFactory instance = null;
+    private final Object lock = new Object();
 
     //Todo read cache configuration from play configuration class
     public static void configure(play.Configuration conf, ExecutionContext context) {
         if (instance == null) {
-            instance = new CacheFactory(context);
+            synchronize(lock){
+                if(instance==null){
+                    instance = new CacheFactory(context);
+                }                
+            }
         }
     }
 

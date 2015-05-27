@@ -14,6 +14,8 @@ import java.util.Map;
  * <p/>
  * Currently used by @see services.search.provider.impl.ElasticSearchProvider
  */
+//TODO: currently there is a bounding of JSON to the SearchCommand, 
+//      split the bounding by introducing JsonParser or something like that
 public class SearchCommand extends Command {
     public SearchCommand(String name, JSONObject command) {
         super(name, command);

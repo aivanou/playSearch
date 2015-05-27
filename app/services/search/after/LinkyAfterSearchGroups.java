@@ -8,16 +8,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-
+//TODO: replace with proper implementation
 public class LinkyAfterSearchGroups implements AfterSearch {
 
     /**
-     * remains items only with the unique domains
+     * Leaves items only with the unique domains
      * applicable only to SearchType.DOCS
      * changes items in @param searchResponse
      * if item does not have a domain field, gets domain from item.getId()
-     * <p/>
-     * maybe it should be threadSafe?
      */
     @Override
     public ContentResponse process(ContentResponse searchResponse) {

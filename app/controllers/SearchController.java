@@ -102,7 +102,7 @@ public class SearchController extends Controller {
                     resultPromise.success(badRequest("Internal server error, please contat administrator if possible"));
                 } else {
                     String json = searchResponse.toJson();
-                    //TODO move to the play configuration file
+                    //TODO move TTL to the play configuration file
                     //30 -- cached object TTL in seconds
                     cache.set(request.getQuery(), json, 30).onFailure(new OnFailure() {
                         @Override

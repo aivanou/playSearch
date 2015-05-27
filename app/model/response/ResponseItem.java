@@ -39,6 +39,7 @@ public class ResponseItem implements Comparable<ResponseItem>, Comparator<Respon
 
         while (fieldIt.hasNext()) {
             Map.Entry<String, JsonNode> entry = fieldIt.next();
+            //TODO: replace with strategy pattern
             if (entry.getKey().equals(Schema.CONTENT)) {
                 content = entry.getValue().asText();
             } else if (entry.getKey().equals(Schema.TITLE)) {
@@ -117,6 +118,7 @@ public class ResponseItem implements Comparable<ResponseItem>, Comparator<Respon
         return indexed;
     }
 
+    //TODO: return the copy of MAP
     public Map<String, String> getParams() {
         return params;
     }
